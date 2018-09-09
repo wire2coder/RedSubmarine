@@ -19,6 +19,22 @@ public class RedditPost implements Parcelable {
     private Boolean over18;
 
 
+    // default Constructor
+    public RedditPost(String title, String thumbnail, String url, String subreddit, String author, String permalink, String id, int score, int numberOfComments, long postedDate, Boolean over18) {
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.url = url;
+        this.subreddit = subreddit;
+        this.author = author;
+        this.permalink = permalink;
+        this.id = id;
+        this.score = score;
+        this.numberOfComments = numberOfComments;
+        this.postedDate = postedDate;
+        this.over18 = over18;
+    }
+
+
     // Getters and Setters
     public String getTitle() {
         return title;

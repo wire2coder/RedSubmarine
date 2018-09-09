@@ -14,12 +14,14 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bkk.android.redsubmarine.model.RedditPost;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,17 +33,19 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "ttt>>>: ";
 
+    private TextView tv_data1;
+    private List<RedditPost> redditPosts = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final TextView tv_data1 = findViewById(R.id.tv_data1);
+        tv_data1 = findViewById(R.id.tv_data1);
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-
 
         JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.GET, REDDIT_URL2, (String) null, new Response.Listener<JSONObject>() {
 
@@ -56,14 +60,34 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray children = data.getJSONArray("children");
 
                     for(int i=0; i<children.length(); i++) {
+
                         JSONObject post = children.getJSONObject(i).getJSONObject("data");
 
-                        // TODO 9/9: make a a RedditPost Object
+                        RedditPost redditPost = new RedditPost(
+                                post.getString("title"),
+                                post.getString("thumbnail"),
+                                post.getString("url"),
+                                post.getString("subreddit"),
+                                post.getString("author"),
+                                post.getString("permalink"),
+                                post.getString("id"),
+                                post.getInt("score"),
+                                post.getInt("num_comments"),
+                                post.getLong("created_utc"),
+                                post.getBoolean("over_18")
 
+                        );
+
+                        // now add the post to the ArrayList, but if check if the Array is empty
+                        if (redditPosts == null) {
+                            redditPosts = new ArrayList<>();
+                        }
+
+                        redditPosts.add(redditPost);
                     }
 
                 } catch (Exception e) {
-                    // TODO: put something in here for handling exceptions
+                    e.printStackTrace();
                 }
 
 
@@ -77,26 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        // Add the request to the RequestQueue, what is this "Queue" ?
         queue.add(request1);
-
-// Request a string response from the provided URL.
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, REDDIT_URL1,
-//                new Response.Listener<String>() {
-//
-//                    @Override
-//                    public void onResponse(String response) {
-//                        // Display the first 500 characters of the response string.
-//                        mTextView.setText("Response is: "+ response.substring(0,500));
-//                    }
-//                }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                mTextView.setText("That didn't work!");
-//            }
-//        });
-
-// Add the request to the RequestQueue.
 
 
 
