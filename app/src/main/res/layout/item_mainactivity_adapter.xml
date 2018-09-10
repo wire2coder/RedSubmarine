@@ -15,26 +15,64 @@
 
 
     <RelativeLayout
+        android:id="@+id/rl_reddit_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_reddit_post"
-        android:minHeight="80dp"
-        >
+        android:minHeight="80dp">
 
         <TextView
-            android:id="@+id/tv_id"
+            android:id="@+id/tv_post_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/niv_post_image"
+       <ImageView
+           android:id="@+id/iv_thumbnail"
+           android:layout_width="match_parent"
+           android:layout_height="200dp"
+           android:scaleType="centerCrop"
+           android:layout_below="@+id/tv_post_title"
+           />
+
+
+        <LinearLayout
+            android:id="@+id/ll_util_bar"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/iv_thumbnail"
+            >
 
-        <!--TODO: 9/9 continue adding LinearLayout here-->
+            
+            <!-- TODO: put 3 TextViews in here vote counter, comments, subreddit catelog  -->
+            <TextView
+                android:id="@+id/tv_vote_counter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="votes"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+            <TextView
+                android:id="@+id/tv_comments_counter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="comments"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:drawableLeft="@drawable/ic_comment_black_24dp"
+                />
+
+            <TextView
+                android:id="@+id/tv_subreddit_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="r/funny"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 

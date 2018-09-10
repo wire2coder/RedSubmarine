@@ -13,6 +13,7 @@ public class RedditPost implements Parcelable {
     private String author;
     private String permalink;
     private String id;
+    private String subreddit_name_prefixed;
 
     private int score, numberOfComments;
     private long postedDate;
@@ -20,7 +21,11 @@ public class RedditPost implements Parcelable {
 
 
     // default Constructor
-    public RedditPost(String title, String thumbnail, String url, String subreddit, String author, String permalink, String id, int score, int numberOfComments, long postedDate, Boolean over18) {
+    public RedditPost(String title, String thumbnail, String url,
+                      String subreddit, String author, String permalink,
+                      String id, String subreddit_name_prefixed,
+                      int score, int numberOfComments, long postedDate, Boolean over18) {
+
         this.title = title;
         this.thumbnail = thumbnail;
         this.url = url;
@@ -28,6 +33,7 @@ public class RedditPost implements Parcelable {
         this.author = author;
         this.permalink = permalink;
         this.id = id;
+        this.subreddit_name_prefixed = subreddit_name_prefixed;
         this.score = score;
         this.numberOfComments = numberOfComments;
         this.postedDate = postedDate;
@@ -92,6 +98,14 @@ public class RedditPost implements Parcelable {
         this.id = id;
     }
 
+    public String getSubreddit_name_prefixed() {
+        return subreddit_name_prefixed;
+    }
+
+    public void setSubreddit_name_prefixed(String subreddit_name_prefixed) {
+        this.subreddit_name_prefixed = subreddit_name_prefixed;
+    }
+
     public int getScore() {
         return score;
     }
@@ -140,6 +154,7 @@ public class RedditPost implements Parcelable {
         dest.writeString(this.author);
         dest.writeString(this.permalink);
         dest.writeString(this.id);
+        dest.writeString(this.subreddit_name_prefixed);
         dest.writeInt(this.score);
         dest.writeInt(this.numberOfComments);
         dest.writeLong(this.postedDate);
@@ -158,6 +173,7 @@ public class RedditPost implements Parcelable {
         this.author = in.readString();
         this.permalink = in.readString();
         this.id = in.readString();
+        this.subreddit_name_prefixed = in.readString();
         this.score = in.readInt();
         this.numberOfComments = in.readInt();
         this.postedDate = in.readLong();

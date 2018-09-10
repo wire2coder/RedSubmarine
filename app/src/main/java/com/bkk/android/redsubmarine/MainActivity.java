@@ -2,6 +2,8 @@ package com.bkk.android.redsubmarine;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
 import com.bkk.android.redsubmarine.model.RedditPost;
 
 import org.json.JSONArray;
@@ -26,23 +29,34 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String CLASS_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = "ttt>>>: ";
+
     private static final String BASE_URL = "https://www.reddit.com/r/";
     private static final String REDDIT_URL1 = "https://www.reddit.com/r/subreddit/new.json?sort=new";
     private static final String REDDIT_URL2 = "https://www.reddit.com//.json";
 
-    private static final String LOG_TAG = "ttt>>>: ";
-
     private TextView tv_data1;
     private List<RedditPost> redditPosts = new ArrayList<>();
 
+    private RecyclerView mRecyclerView;
+    private MainActivityAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv_data1 = findViewById(R.id.tv_data1);
+
+        mRecyclerView = findViewById(R.id.rv_redditPosts);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new MainActivityAdapter(redditPosts, this);
+        mRecyclerView.setAdapter(mAdapter); // >> mAdapter is EMPTY at this point
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -52,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d(LOG_TAG, response.toString());
+
+//                mAdapter.clearAdapter();
 
                 // parse JSON data
                 // data(JSON object) >> children(JSON array) >> data(JSON object)
@@ -71,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                                 post.getString("author"),
                                 post.getString("permalink"),
                                 post.getString("id"),
+                                post.getString("subreddit_name_prefixed"),
                                 post.getInt("score"),
                                 post.getInt("num_comments"),
                                 post.getLong("created_utc"),
@@ -90,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                // Data fetched from Reddit, now update the Adapter
+//                mAdapter.notifyDataSetChanged();
+                mAdapter.swapData(redditPosts);
 
             } // onResponse
         }, new Response.ErrorListener() {
@@ -103,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue, what is this "Queue" ?
         queue.add(request1);
-
 
 
     } // onCreate
