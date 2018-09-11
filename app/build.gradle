@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+// Google Firebase
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 27
@@ -38,4 +40,9 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     // Picasso image processing library
     implementation 'com.squareup.picasso:picasso:2.71828'
+    // Google Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    // Google Firebase Crashlytic
+    implementation 'com.google.firebase:firebase-crash:16.2.0'
 }
+

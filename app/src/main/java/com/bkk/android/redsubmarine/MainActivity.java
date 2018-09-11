@@ -18,6 +18,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
 import com.bkk.android.redsubmarine.model.RedditPost;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crash.component.FirebaseCrashRegistrar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // TODO: https://firebase.google.com/docs/crashlytics/get-started 9/11
+        FirebaseCrash.log("Here comes he exception");
+        FirebaseCrash.report(new Exception("opps!"));
 
         mRecyclerView = findViewById(R.id.rv_redditPosts);
         mRecyclerView.setHasFixedSize(true);

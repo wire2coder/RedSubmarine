@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "716192331979",
+    "firebase_url": "https://redsubmarine-123.firebaseio.com",
+    "project_id": "redsubmarine-123",
+    "storage_bucket": "redsubmarine-123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716192331979:android:ad2efe606cb26030",
+        "android_client_info": {
+          "package_name": "com.bkk.android.redsubmarine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716192331979-dv7upj73rm2n0hrae7i5toa5vanup3oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMrjf3PMT2oKhme8HBZH39h-g0H3HC_mw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

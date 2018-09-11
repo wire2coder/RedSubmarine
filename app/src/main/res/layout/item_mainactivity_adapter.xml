@@ -60,7 +60,6 @@
                 android:layout_weight="1"
                 android:text="comments"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:drawableLeft="@drawable/ic_comment_black_24dp"
                 />
 
             <TextView
