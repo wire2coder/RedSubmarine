@@ -1,10 +1,16 @@
 package com.bkk.android.redsubmarine;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
 import com.bkk.android.redsubmarine.model.RedditPost;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crash.component.FirebaseCrashRegistrar;
 
@@ -45,14 +52,16 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private Menu sortMenu;
+
+    // TODO: 9/11 add a Navigation Drawer
+//    https://developer.android.com/training/implementing-navigation/nav-drawer
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO: https://firebase.google.com/docs/crashlytics/get-started 9/11
-        FirebaseCrash.log("Here comes he exception");
-        FirebaseCrash.report(new Exception("opps!"));
 
         mRecyclerView = findViewById(R.id.rv_redditPosts);
         mRecyclerView.setHasFixedSize(true);
@@ -131,6 +140,34 @@ public class MainActivity extends AppCompatActivity {
 
 
     } // onCreate
+
+
+    // Google Crashlytics for a crash
+    public void forceACrash() {
+        // [START crash_force_crash]
+        Button crashButton = new Button(this);
+        crashButton.setText("Crash!");
+        crashButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Crashlytics.getInstance().crash(); // Force a crash
+            }
+        });
+
+        addContentView(crashButton, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        // [END crash_force_crash]
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.sort_menu, menu);
+
+        return true;
+    }
+
 
 
 } // class MainActivity

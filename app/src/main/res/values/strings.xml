@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">RedSubmarine</string>
+
+    <!-- Top Menu Strings -->
+    <string name="search">Search</string>
+
 </resources>
