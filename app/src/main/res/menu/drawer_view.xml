@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+<!--https://developer.android.com/training/implementing-navigation/nav-drawer-->
+<!--this file is for activity_main.xml >> DrawerLayout -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <group android:checkableBehavior="single">
+
+    <!--TODO: rename this-->
+    <group
+        android:id="@+id/groupFav"
+        android:checkableBehavior="single">
+
         <item
-            android:id="@+id/nav_camera"
-            android:title="import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:title="gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:title="slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:title="tools" />
+            android:id="@+id/action_favorites"
+            android:title="Favorites" />
     </group>
+
+    <!--TODO: rename this-->
+    <group android:id="@+id/group2">
+    </group>
+
 </menu>
 
 

@@ -1,12 +1,16 @@
 package com.bkk.android.redsubmarine;
 
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -59,20 +63,42 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
 
-
+    // TODO: Add a Click Listener when user click on a post and open Detail Activity 9/17
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set the toolbar as the action bar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        /* Navigation Drawer*/
+        // Enable the app bar's "home" button
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true); // << this line shows an arrow pointing left
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu); // << this line replaced the "left pointing arrow" with the "3 lines icon"
+
+        // Navigation Drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // TODO: 9/12 add a Navigation Drawer
-        // https://developer.android.com/training/implementing-navigation/nav-drawer
+
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+                        // set items as selected to persist high light
+                        menuItem.setCheckable(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        // Add code here to update the UI based on the item selected. For example, swap UI fragments here
+                        return false;
+                    }
+                }
+        );
+
 
 
         mRecyclerView = findViewById(R.id.rv_redditPosts);
@@ -152,6 +178,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     } // onCreate
+
+
+    // Open the drawer when the button is tapped
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    } // onOptionsItemSelected()
 
 
     // Google Crashlytics for a crash
