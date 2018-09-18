@@ -43,8 +43,6 @@
             android:layout_below="@+id/iv_thumbnail"
             >
 
-            
-            <!-- TODO: put 3 TextViews in here vote counter, comments, subreddit catelog  -->
             <TextView
                 android:id="@+id/tv_vote_counter"
                 android:layout_width="0dp"

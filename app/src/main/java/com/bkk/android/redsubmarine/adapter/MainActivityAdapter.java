@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +33,9 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
     private List<RedditPost> redditPosts;
     private Context mContext;
 
+    // OnItemClickListener is an INTERFACE
+    private OnItemClickListener mItemClickListener;
+
 
     //>> constructor
     public MainActivityAdapter(List<RedditPost> redditPosts, Context context) {
@@ -51,6 +55,11 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
         }
 
         notifyDataSetChanged();
+    }
+
+    // Getter
+    public List<RedditPost> getRedditPosts() {
+        return this.redditPosts;
     }
 
     @NonNull
@@ -90,7 +99,7 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
     }
 
     // TODO: need to implement click listener
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         //>> member variables
         protected ImageView iv_thumbnail; // Volley ImageView
@@ -113,12 +122,35 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
             this.tv_comments_counter = itemView.findViewById(R.id.tv_comments_counter);
             this.tv_subreddit_name = itemView.findViewById(R.id.tv_subreddit_name);
 
+//            itemView.setClickable(true); // TODO: remove this line
+            itemView.setOnClickListener(this);
+
+        }
+
+        // implements View.OnClickListener
+        @Override
+        public void onClick(View view) {
+             if (mItemClickListener != null) {
+                 mItemClickListener.onItemClick( view, getAdapterPosition() );
+             }
         }
 
         @Override
         public String toString() {
             return super.toString();
         }
+
+    } // class RecyclerViewHolder
+
+
+    // interface for clicking methods
+    public interface OnItemClickListener {
+        // method 1
+        void onItemClick(View view, int postion);
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
     }
 
 } // class MainActivityAdapter extends

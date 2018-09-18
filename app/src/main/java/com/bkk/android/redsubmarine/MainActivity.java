@@ -1,5 +1,6 @@
 package com.bkk.android.redsubmarine;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mAdapter = new MainActivityAdapter(redditPosts, this);
+        mAdapter.SetOnItemClickListener(redditPostClick1); // >> do something when you click on a "View item"
         mRecyclerView.setAdapter(mAdapter); // >> mAdapter is EMPTY at this point
 
         // Instantiate the RequestQueue.
@@ -220,6 +222,37 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // TODO:
+    public MainActivityAdapter.OnItemClickListener redditPostClick1 = new MainActivityAdapter.OnItemClickListener() {
 
+        @Override
+        public void onItemClick(View view, int position) {
+            RedditPost redditPost1 = mAdapter.getRedditPosts().get(position);
+
+            Intent intentDetailActivity  = new Intent(getApplicationContext(), DetailActivity.class);
+
+            intentDetailActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // TODO: I don't know the purpose of this line
+
+            Bundle bundle1 = new Bundle();
+            bundle1.putString("title", redditPost1.getThumbnail());
+            bundle1.putString("thumbnail", redditPost1.getThumbnail());
+            bundle1.putString("url", redditPost1.getUrl());
+            bundle1.putString("subreddit", redditPost1.getSubreddit());
+            bundle1.putString("author", redditPost1.getAuthor());
+            bundle1.putString("permalink", redditPost1.getPermalink());
+            bundle1.putString("id", redditPost1.getId());
+            bundle1.putString("subreddit_name_prefixed", redditPost1.getSubreddit_name_prefixed());
+            bundle1.putInt("score", redditPost1.getScore());
+            bundle1.putInt("num_comments", redditPost1.getNumberOfComments());
+            bundle1.putBoolean("over_18", redditPost1.getOver18() );
+
+            Log.d("TTT>>>", redditPost1.getTitle() );
+            startActivity(intentDetailActivity);
+
+
+
+
+        }
+    };
 
 } // class MainActivity
