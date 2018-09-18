@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
 
-    // TODO: Add a Click Listener when user click on a post and open Detail Activity 9/17
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -229,30 +227,28 @@ public class MainActivity extends AppCompatActivity {
         public void onItemClick(View view, int position) {
             RedditPost redditPost1 = mAdapter.getRedditPosts().get(position);
 
-            Intent intentDetailActivity  = new Intent(getApplicationContext(), DetailActivity.class);
-
-            intentDetailActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // TODO: I don't know the purpose of this line
+//            intentDetailActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // TODO: I don't know the purpose of this line
 
             Bundle bundle1 = new Bundle();
-            bundle1.putString("title", redditPost1.getThumbnail());
-            bundle1.putString("thumbnail", redditPost1.getThumbnail());
-            bundle1.putString("url", redditPost1.getUrl());
-            bundle1.putString("subreddit", redditPost1.getSubreddit());
-            bundle1.putString("author", redditPost1.getAuthor());
-            bundle1.putString("permalink", redditPost1.getPermalink());
-            bundle1.putString("id", redditPost1.getId());
-            bundle1.putString("subreddit_name_prefixed", redditPost1.getSubreddit_name_prefixed());
-            bundle1.putInt("score", redditPost1.getScore());
-            bundle1.putInt("num_comments", redditPost1.getNumberOfComments());
-            bundle1.putBoolean("over_18", redditPost1.getOver18() );
+            bundle1.putParcelable("redditPost1", redditPost1); // << using Parcelable
 
-            Log.d("TTT>>>", redditPost1.getTitle() );
-            startActivity(intentDetailActivity);
+            final Intent intent1 = new Intent(getBaseContext(), DetailActivity.class);
+            intent1.putExtras(bundle1);
+            startActivity(intent1);
 
+//            bundle1.putString("title", redditPost1.getThumbnail());
+//            bundle1.putString("thumbnail", redditPost1.getThumbnail());
+//            bundle1.putString("url", redditPost1.getUrl());
+//            bundle1.putString("subreddit", redditPost1.getSubreddit());
+//            bundle1.putString("author", redditPost1.getAuthor());
+//            bundle1.putString("permalink", redditPost1.getPermalink());
+//            bundle1.putString("id", redditPost1.getId());
+//            bundle1.putString("subreddit_name_prefixed", redditPost1.getSubreddit_name_prefixed());
+//            bundle1.putInt("score", redditPost1.getScore());
+//            bundle1.putInt("num_comments", redditPost1.getNumberOfComments());
+//            bundle1.putBoolean("over_18", redditPost1.getOver18() );
 
-
-
-        }
+        } // onItemClick()
     };
 
 } // class MainActivity

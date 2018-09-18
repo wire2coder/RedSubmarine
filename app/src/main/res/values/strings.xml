@@ -4,4 +4,11 @@
     <!-- Top Menu Strings -->
     <string name="search">Search</string>
 
+    <string name="deatil_activity_toolbar_title">Post 2</string>
+
+    <string name="title" translatable="false">title</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

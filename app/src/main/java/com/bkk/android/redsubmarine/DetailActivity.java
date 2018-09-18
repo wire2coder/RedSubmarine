@@ -1,9 +1,14 @@
 package com.bkk.android.redsubmarine;
 
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
+
+import com.bkk.android.redsubmarine.model.RedditPost;
 
 // This class is for showing 1 Reddit post
 public class DetailActivity extends AppCompatActivity {
@@ -14,22 +19,55 @@ public class DetailActivity extends AppCompatActivity {
     // class variables
     String id;
     Bundle bundle1;
-    Toolbar toolbar1;
+    Toolbar toolbar2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail); // TODO: 9/18 add code to activity_detail.xml file
+        setContentView(R.layout.activity_detail);
 
-        setSupportActionBar(toolbar1); // set up the top Action Bar
-        ActionBar actionBar1 = getSupportActionBar();
-        if (actionBar1 != null) {
-            actionBar1.setDisplayHomeAsUpEnabled(true); // setting the "back" button for the action bar
+        Bundle bundle1 = getIntent().getExtras();
+        RedditPost redditPost1 = bundle1.getParcelable("redditPost1");
+        Log.d(LOG_TAG, redditPost1.getTitle() );
+
+        toolbar2 = findViewById(R.id.toolbar2); // looking for toolbar2
+        setSupportActionBar(toolbar2); // set up the top Action Bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle( redditPost1.getTitle() );
+
+        // ain't no "State data" saved
+        if (savedInstanceState == null) {
+
+
+            // TODO: 9/18 make a DetailFragment again
+            // make a new DetailFragment
+//            DetailFragment detailFragment = new DetailFragment();
+//
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.detailFragment, detailFragment)
+//                    .commit();
+
+
         }
+
 
 
     } // onCreate()
 
+
+    //
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == android.R.id.home) { // << built in Android variable
+
+            // https://developer.android.com/reference/androidx/core/app/NavUtils
+            NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
+        }
+
+        return true; // returned true the click event will be consumed by the onOptionsItemSelect()
+    } // onOptionsItemSelected()
 
 
 } // class DetailActivity
