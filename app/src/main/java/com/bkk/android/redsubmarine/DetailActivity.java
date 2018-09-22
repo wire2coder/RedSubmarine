@@ -1,6 +1,7 @@
 package com.bkk.android.redsubmarine;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,25 +31,33 @@ public class DetailActivity extends AppCompatActivity {
         RedditPost redditPost1 = bundle1.getParcelable("redditPost1");
         Log.d(LOG_TAG, redditPost1.getTitle() );
 
-        toolbar2 = findViewById(R.id.toolbar2); // looking for toolbar2
-        setSupportActionBar(toolbar2); // set up the top Action Bar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle( redditPost1.getTitle() );
+//        toolbar2 = findViewById(R.id.toolbar2); // looking for toolbar2
+//        setSupportActionBar(toolbar2); // set up the top Action Bar
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setTitle( redditPost1.getTitle() );
 
         // ain't no "State data" saved
-        if (savedInstanceState == null) {
+//        if (savedInstanceState == null) {
 
 
             // TODO: 9/18 make a DetailFragment again
             // make a new DetailFragment
-//            DetailFragment detailFragment = new DetailFragment();
-//
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.detailFragment, detailFragment)
-//                    .commit();
 
+        DetailFragment detailFragment = new DetailFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-        }
+        // make a new bundle
+        Bundle bundle2 = new Bundle();
+        bundle2.putParcelable("redditPost1", redditPost1); // << using Parcelable
+
+        // fragment setArgument
+        detailFragment.setArguments(bundle2);
+
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_detail1, detailFragment)
+                .commit();
+
+//        }
 
 
 

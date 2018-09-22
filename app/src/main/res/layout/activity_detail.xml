@@ -8,19 +8,27 @@
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--&gt;-->
+
+        <!--&lt;!&ndash; Adding Toolbar for Navigation Drawer, this is at the top left corner of the screen &ndash;&gt;-->
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/toolbar2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?android:attr/actionBarSize"-->
+            <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+            <!--/>-->
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+
+    <!-- for fragment_detail -->
+    <FrameLayout
+        android:id="@+id/fragment_detail1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <!-- Adding Toolbar for Navigation Drawer, this is at the top left corner of the screen -->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar2"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            />
-
-    </android.support.design.widget.AppBarLayout>
+        android:layout_height="wrap_content" />
+    <!--TODO: might have to change wrap_content to something else-->
 
 </android.support.design.widget.CoordinatorLayout>

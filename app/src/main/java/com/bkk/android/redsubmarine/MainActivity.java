@@ -220,7 +220,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    // TODO:
     public MainActivityAdapter.OnItemClickListener redditPostClick1 = new MainActivityAdapter.OnItemClickListener() {
 
         @Override
