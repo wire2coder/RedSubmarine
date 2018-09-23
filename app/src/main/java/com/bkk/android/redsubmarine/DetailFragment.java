@@ -1,8 +1,11 @@
 package com.bkk.android.redsubmarine;
 
 import android.content.Intent;
+import android.graphics.ColorSpace;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,6 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class DetailFragment extends Fragment {
@@ -79,10 +86,130 @@ public class DetailFragment extends Fragment {
         // TODO: 9/23 make a network request to get comments
 
          // volleyRequest(); << this doesn't work
+        // using regular AsyncTask instead
+
+        class GetRedditComments extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... strings) {
+
+                String url1 = "https://www.reddit.com//r/AskReddit/comments/9hzlya/women_who_have_given_birth_whats_something_no_one/.json";
+
+                // mComments.addAll( processor.fetchComments() );
+                    // processor = new CommentProcessor(url)
+                // return "done"
+
+                Log.i(">>>", url1);
+
+                // Get the contents of the Reddit Post
+                String dataStream = getComments1(url1);
+
+                try {
+
+                    JSONArray jsonArray = new JSONArray(dataStream)
+                            .getJSONObject(1)
+                            .getJSONObject("data")
+                            .getJSONArray("children");
+
+                    Log.i("comments>>>", jsonArray.toString() );
+
+                    // Reddit comments with no reply, reply level zero
+//                    process(comments, r, 0);
+//                    Log.i("processor","COMMENTS:"+String.valueOf(comments.size()));
+
+                    for(int i=0; i < jsonArray.length(); i++) {
+                        if (jsonArray.getJSONObject(i).optString("kind") == null) {
+                            continue;
+                        }
+
+                        if (jsonArray.getJSONObject(i).optString("kind").equals("t1") == false) {
+                            continue;
+                        }
+
+                        JSONObject jsonObject1 = jsonArray.getJSONObject(i).getJSONObject("data");
+
+                        // Comment comment = loadComment(data,level);
+                        // TODO: 9/23
+
+
+
+                    } // inside a for loop
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
+                return null;
+            } // doInBackground()
+
+            @Override
+            protected void onPostExecute(String result) {
+
+
+                super.onPostExecute(result);
+            } // onPostExecute()
+
+        } // class GetRedditComments
+
+        GetRedditComments getRedditComments = new GetRedditComments();
+        getRedditComments.execute(); // TODO: put a URL here
+
+
+
 
 
         return rootView;
     } // onCreateView()
+
+
+    // helper
+    public static HttpURLConnection createConnection(String url){
+
+        try {
+
+            HttpURLConnection httpURLConnection = (HttpURLConnection)new URL(url).openConnection();
+            httpURLConnection.setReadTimeout(30000);
+            httpURLConnection.setRequestProperty("User-Agent", "Firefox 50");
+            return httpURLConnection;
+
+        } catch(Exception e) {
+
+            Log.d("CONNECTION FAILED", e.toString());
+            return null;
+
+        }
+
+    }
+
+
+    // helper
+    public static String getComments1(String url) {
+
+        try {
+            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String empty = "";
+
+            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(httpURLConnection.getInputStream() ) );
+
+            while ( (empty = bufferedReader.readLine()) != null) {
+                stringBuffer.append(empty).append("\n");
+            }
+
+            bufferedReader.close();
+
+            return stringBuffer.toString();
+
+        } catch(Exception e) {
+            Log.d(CLASS_TAG, "error: parseStream()");
+            return null;
+        }
+
+
+    }
 
 
     // helper
