@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bkk.android.redsubmarine.model.RedditComments;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.squareup.picasso.Picasso;
 
@@ -35,6 +36,9 @@ public class DetailFragment extends Fragment {
     // class variables
     private static final String CLASS_TAG = DetailFragment.class.getSimpleName();
     private static final String LOG_TAG = "ttt>>>: ";
+
+    ArrayList<RedditComments> mComments;
+
 
 //    required empty constructor
     public DetailFragment() {
@@ -68,11 +72,11 @@ public class DetailFragment extends Fragment {
 
 
 
-        // TODO: 9/22 fetch and add comments to a RecyclerView, need to make a new Adapter
+        // TODO: 9/23 fetch and add comments to a RecyclerView, need to make a new Adapter
         // https://stackoverflow.com/questions/21579918/retrieving-comments-from-reddits-api
         // $.getJSON("http://www.reddit.com/r/" + sub + "/comments/" + id + ".json?", function (data)
         // https://www.reddit.com//r/funny/comments/9hwreb/a_shark_hanging_upside_down_looks_like_someone/.json
-        // TODO: 9/22 make a network request to get comments
+        // TODO: 9/23 make a network request to get comments
 
          // volleyRequest(); << this doesn't work
 
