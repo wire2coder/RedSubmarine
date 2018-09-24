@@ -1,5 +1,6 @@
 package com.bkk.android.redsubmarine;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.ColorSpace;
 import android.os.AsyncTask;
@@ -9,11 +10,14 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bkk.android.redsubmarine.adapter.RedditCommentsAdapter;
 import com.bkk.android.redsubmarine.model.RedditComments;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.squareup.picasso.Picasso;
@@ -36,7 +41,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class DetailFragment extends Fragment {
 
@@ -44,17 +57,24 @@ public class DetailFragment extends Fragment {
     private static final String CLASS_TAG = DetailFragment.class.getSimpleName();
     private static final String LOG_TAG = "ttt>>>: ";
 
-    ArrayList<RedditComments> mComments;
-
+    ArrayList<RedditComments> mComments = new ArrayList<>();
+    RedditCommentsAdapter redditCommentsAdapter;
+    LinearLayoutManager linearLayoutManager1;
+    RecyclerView recyclerView1;
 
 //    required empty constructor
     public DetailFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        // ButterKnife
+        ButterKnife.bind(this, rootView);
+
+        final Activity activity1 = this.getActivity();
 
         // extracting data
         RedditPost redditPost1 =  getArguments().getParcelable("redditPost1");
@@ -78,15 +98,12 @@ public class DetailFragment extends Fragment {
         tv_post_title.setText(redditPost1.getTitle());
 
 
-
-        // TODO: 9/23 fetch and add comments to a RecyclerView, need to make a new Adapter
         // https://stackoverflow.com/questions/21579918/retrieving-comments-from-reddits-api
         // $.getJSON("http://www.reddit.com/r/" + sub + "/comments/" + id + ".json?", function (data)
         // https://www.reddit.com//r/funny/comments/9hwreb/a_shark_hanging_upside_down_looks_like_someone/.json
-        // TODO: 9/23 make a network request to get comments
 
-         // volleyRequest(); << this doesn't work
-        // using regular AsyncTask instead
+            // volleyRequest(); << this doesn't work
+            // using regular AsyncTask instead
 
         class GetRedditComments extends AsyncTask<String, Void, String> {
 
@@ -99,7 +116,7 @@ public class DetailFragment extends Fragment {
                     // processor = new CommentProcessor(url)
                 // return "done"
 
-                Log.i(">>>", url1);
+                Log.i("doInBackground>>>", url1);
 
                 // Get the contents of the Reddit Post
                 String dataStream = getComments1(url1);
@@ -114,41 +131,39 @@ public class DetailFragment extends Fragment {
                     Log.i("comments>>>", jsonArray.toString() );
 
                     // Reddit comments with no reply, reply level zero
-//                    process(comments, r, 0);
-//                    Log.i("processor","COMMENTS:"+String.valueOf(comments.size()));
-
-                    for(int i=0; i < jsonArray.length(); i++) {
-                        if (jsonArray.getJSONObject(i).optString("kind") == null) {
-                            continue;
-                        }
-
-                        if (jsonArray.getJSONObject(i).optString("kind").equals("t1") == false) {
-                            continue;
-                        }
-
-                        JSONObject jsonObject1 = jsonArray.getJSONObject(i).getJSONObject("data");
-
-                        // Comment comment = loadComment(data,level);
-                        // TODO: 9/23
-
-
-
-                    } // inside a for loop
+                    process1(mComments, jsonArray, 0);
+//                    Log.i("ggg"," Comments AL: " + String.valueOf(mComments.size()) );
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
 
-
-                return null;
+                // now go to onPostExecute()
+                return "this goes to onPostExecute() as 'result' ";
             } // doInBackground()
 
             @Override
             protected void onPostExecute(String result) {
 
+//                Log.i("ggg"," Comments AL: " + String.valueOf(mComments.size()) );
+//                Log.i("ggg"," Comments AL: " + mComments );
+                Log.i("ggg>>>", result);
 
-                super.onPostExecute(result);
+                recyclerView1 = rootView.findViewById(R.id.rv_post_comments);
+
+                // TODO: 9/24 setAdapter is giving me a null pointer exception!
+                redditCommentsAdapter = new RedditCommentsAdapter( activity1, mComments);
+                recyclerView1.setAdapter(redditCommentsAdapter);
+
+                linearLayoutManager1 = new LinearLayoutManager(getContext());
+
+                recyclerView1.setLayoutManager(linearLayoutManager1);
+
+
+
+
+//                super.onPostExecute(result);
             } // onPostExecute()
 
         } // class GetRedditComments
@@ -157,11 +172,76 @@ public class DetailFragment extends Fragment {
         getRedditComments.execute(); // TODO: put a URL here
 
 
-
-
-
         return rootView;
     } // onCreateView()
+
+
+    // helper
+    private void process1( ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_level ) throws Exception {
+
+        for (int x=0; x < jsonArray.length(); x++) {
+
+            if (jsonArray.getJSONObject(x).optString("kind") == null) {
+                continue;
+            }
+
+            if (jsonArray.getJSONObject(x).optString("kind").equals("t1") == false) {
+                continue;
+            }
+
+            JSONObject data1 = jsonArray.getJSONObject(x).getJSONObject("data");
+
+            // extracting comments data from "data" and put the "data" inside the RedditComments object
+
+            RedditComments redditComments1 = new RedditComments();
+
+            redditComments1.setText( data1.getString("body") );
+            redditComments1.setAuthor( data1.getString("author") );
+
+            int votes1 = data1.getInt("ups") - data1.getInt("downs");
+            redditComments1.setVotes( String.valueOf(votes1) );
+
+            Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+            calendar.setTimeInMillis( data1.getLong("created_utc") * 1000 );
+            String date1 = android.text.format.DateFormat.format("HH:mm  dd/MM/yy", calendar).toString();
+            redditComments1.setPostedOn(date1);
+
+            redditComments1.setLevel(comment_level);
+
+
+            if ( redditComments1.getAuthor() != null ) {
+                // Log.i("ttt>>>", redditComments1.getAuthor());
+                redditComments_al.add(redditComments1);
+
+                addCommentReplies(redditComments_al, data1, comment_level + 1);
+//                Log.i("ttt>>>", String.valueOf(redditComments_al.size())  );
+            }
+
+        } // inside for loop
+
+    } // process1()
+
+
+    private void addCommentReplies( ArrayList<RedditComments> redditCommentsArrayList, JSONObject jsonObject, int comment_level ) {
+
+        try {
+
+            if ( jsonObject.get("replies").equals("") ) {
+                // no replies to the comment
+                return; // exit the function
+            }
+
+            JSONArray jsonArray = jsonObject.getJSONObject("replies")
+                    .getJSONObject("data")
+                    .getJSONArray("children");
+
+            process1(redditCommentsArrayList, jsonArray, comment_level );
+
+        } catch(Exception e) {
+            Log.e(LOG_TAG, "error at addCommentReplies()" );
+        }
+
+    } // addCommentReplies()
 
 
     // helper
@@ -204,54 +284,18 @@ public class DetailFragment extends Fragment {
             return stringBuffer.toString();
 
         } catch(Exception e) {
+
             Log.d(CLASS_TAG, "error: parseStream()");
             return null;
+
         }
 
+    } // getComments1()
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
-
-
-    // helper
-    public void volleyRequest() {
-
-        RequestQueue queue1 = Volley.newRequestQueue( getActivity().getBaseContext() );
-        String COMMENTS_URL1 = "https://www.reddit.com//r/funny/comments/9hwreb/a_shark_hanging_upside_down_looks_like_someone/.json";
-
-
-        JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.GET
-                , COMMENTS_URL1
-                , (String) null
-                , new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d("fragment_detail", response.toString());
-
-//                mAdapter.clearAdapter();
-
-                // parse JSON data
-                // data(JSON object) >> children(JSON array) >> data(JSON object)
-
-
-            } // onResponse
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-//                VolleyLog.d(LOG_TAG, "fragment Error: " + error.getMessage());
-
-                Toast.makeText(getActivity().getBaseContext()
-                        , "VolleyError in Fragment",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-        });
-
-
-        // Add the request to the RequestQueue, what is this "Queue" ?
-        queue1.add(request1);
-
-    } // volleyRequest
 
 } // class DetailFragment
