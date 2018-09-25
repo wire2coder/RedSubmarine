@@ -3,6 +3,7 @@ package com.bkk.android.redsubmarine;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.ColorSpace;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -14,10 +15,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class DetailFragment extends Fragment {
 
@@ -62,6 +66,18 @@ public class DetailFragment extends Fragment {
     LinearLayoutManager linearLayoutManager1;
     RecyclerView recyclerView1;
 
+    // ButterKnife "binding"
+    // do not use the same "BindView name" and the name of the "UI variable", you will NULL POINTER EXCEPTION
+    private Unbinder unBinder;
+    @BindView(R.id.fragment_share_button) ImageView share_pic_button;
+    @BindView(R.id.fragment_save_button) ImageView save_pic_button;
+
+    @BindView(R.id.fragment_header_image) ImageView imageView1;
+    @BindView(R.id.fragment_votes) TextView tv_votes;
+    @BindView(R.id.fragment_comments_count) TextView tv_comments_count;
+    @BindView(R.id.fragment_post_title) TextView tv_post_title;
+
+
 //    required empty constructor
     public DetailFragment() {
     }
@@ -72,35 +88,25 @@ public class DetailFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         // ButterKnife
-        ButterKnife.bind(this, rootView);
+        unBinder = ButterKnife.bind(this, rootView);
 
         final Activity activity1 = this.getActivity();
 
         // extracting data from DetailActivity
-        RedditPost redditPost1 =  getArguments().getParcelable("redditPost1");
+        final RedditPost redditPost1 =  getArguments().getParcelable("redditPost1");
         final String commentUrl = "https://www.reddit.com" + redditPost1.getPermalink() + ".json";
 
 //        Log.d( LOG_TAG, redditPost1.getThumbnail() );
 //        Log.d( LOG_TAG, "www.reddit.com" + redditPost1.getPermalink() + ".json" );
 
 
-
-
-        ImageView imageView1 = rootView.findViewById(R.id.fragment_header_image);
-
         // use Picasso to get the "header image"
         Picasso.get()
                 .load(redditPost1.getThumbnail())
                 .into(imageView1);
 
-
-        TextView tv_votes = rootView.findViewById(R.id.fragment_votes);
-        TextView tv_comments_count = rootView.findViewById(R.id.fragment_comments_count);
-        TextView tv_post_title = rootView.findViewById(R.id.fragment_post_title);
-
         tv_votes.setText( String.valueOf(redditPost1.getScore()) );
         tv_comments_count.setText( String.valueOf(redditPost1.getNumberOfComments()) );
-
         tv_post_title.setText(redditPost1.getTitle());
 
 
@@ -116,8 +122,6 @@ public class DetailFragment extends Fragment {
             @Override
             protected String doInBackground(String... inputs) {
 
-//                String url1 = "https://www.reddit.com//r/AskReddit/comments/9hzlya/women_who_have_given_birth_whats_something_no_one/.json";
-
                 // mComments.addAll( processor.fetchComments() );
                 // processor = new CommentProcessor(url)
 
@@ -125,7 +129,6 @@ public class DetailFragment extends Fragment {
                 Log.i("doInBackground", inputUrl);
 
                 // Get the contents of the Reddit Post
-//                String dataStream = getComments1("https://www.reddit.com/r/sports/comments/9inlgv/vance_macdonald_with_one_of_my_favorite_stiff/.json");
                 String dataStream = getComments1(inputUrl);
 
                 try {
@@ -150,6 +153,7 @@ public class DetailFragment extends Fragment {
                 return "this goes to onPostExecute() as 'result' ";
             } // doInBackground()
 
+
             @Override
             protected void onPostExecute(String result) {
 
@@ -165,6 +169,7 @@ public class DetailFragment extends Fragment {
                 recyclerView1.setLayoutManager(linearLayoutManager1);
                 recyclerView1.setNestedScrollingEnabled(false); // can't scroll inside the Adapter's Layoutfile
 
+                // TODO: 9/25, maybe do the adapterSwapData() here instead
                 recyclerView1.setAdapter(redditCommentsAdapter);
 
 
@@ -177,7 +182,7 @@ public class DetailFragment extends Fragment {
             GetRedditComments getRedditComments = new GetRedditComments();
 
             Log.i("commentUrl>>>", commentUrl);
-            getRedditComments.execute(commentUrl); // TODO: put a URL here
+            getRedditComments.execute(commentUrl);
 
         } else {
             // get data out of ParcelableArrrayList
@@ -190,8 +195,67 @@ public class DetailFragment extends Fragment {
         }
 
 
+        // Completed: add setOnClickListener() for the "share button, the 3 dots"
+        share_pic_button.setOnClickListener(new View.OnClickListener() {
 
-        // TODO: add setOnClickListener()
+            @Override
+            public void onClick(View view) {
+                // go make a XML layout file in /menu
+                PopupMenu popupMenu1 = new PopupMenu(getContext(), share_pic_button);
+                popupMenu1.getMenuInflater().inflate(R.menu.share_menu_button_layout, popupMenu1.getMenu());
+
+                popupMenu1.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        switch (menuItem.getItemId()) {
+
+                            case R.id.three_dot_menu_open_with:
+                                Intent intentOpen = new Intent((Intent.ACTION_VIEW));
+//                                Log.i(LOG_TAG, redditPost1.getUrl() );
+                                Uri uri1 = Uri.parse( redditPost1.getUrl() );
+
+                                intentOpen.setData(uri1); // << wow, this works
+                                startActivity(intentOpen);
+                                break;
+
+                            case R.id.three_dot_menu_share_with:
+                                Intent intentShare = new Intent(Intent.ACTION_SEND);
+                                Uri uri2 = Uri.parse( redditPost1.getUrl() );
+
+                                intentShare.putExtra(Intent.EXTRA_TEXT, uri2);
+                                intentShare.setType("text/plain");
+                                startActivity(intentShare);
+
+                                startActivity( Intent.createChooser(intentShare, "asdf Share") );
+//                                startActivity( intentShare );
+                                break;
+
+                        } // switch
+
+                        return true; // CONSUME THE "CLICK EVENT"
+
+                    } // onMenuItemClick()
+                }); // popupMenu1.setOnMenuItemClickListener()
+
+                // show the three_dot_menu
+                popupMenu1.show();
+
+            } // onClick()
+
+        }); // fragment_share_button.setOnClickListener()
+
+
+        save_pic_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // TODO: 9/25 do saveToDatabase() when you click on the "Save button"
+
+
+//                Toast.makeText(getContext(), "ffffffff", Toast.LENGTH_SHORT).show();
+            } // onClick()
+        }); // save_pic_button.setOnClickListener()
 
 
         // TODO: add Google Ads
@@ -321,5 +385,12 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unBinder.unbind();
+    }
+
 
 } // class DetailFragment

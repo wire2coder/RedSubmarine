@@ -11,4 +11,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!--3 dot image button inside fragment_detail.xml-->
+    <string name="three_dot_menu_open_in">open with</string>
+    <string name="three_dot_menu_share_with">share with</string>
+
 </resources>
