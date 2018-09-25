@@ -76,9 +76,15 @@ public class DetailFragment extends Fragment {
 
         final Activity activity1 = this.getActivity();
 
-        // extracting data
+        // extracting data from DetailActivity
         RedditPost redditPost1 =  getArguments().getParcelable("redditPost1");
+        final String commentUrl = "https://www.reddit.com" + redditPost1.getPermalink() + ".json";
+
 //        Log.d( LOG_TAG, redditPost1.getThumbnail() );
+//        Log.d( LOG_TAG, "www.reddit.com" + redditPost1.getPermalink() + ".json" );
+
+
+
 
         ImageView imageView1 = rootView.findViewById(R.id.fragment_header_image);
 
@@ -108,18 +114,19 @@ public class DetailFragment extends Fragment {
         class GetRedditComments extends AsyncTask<String, Void, String> {
 
             @Override
-            protected String doInBackground(String... strings) {
+            protected String doInBackground(String... inputs) {
 
-                String url1 = "https://www.reddit.com//r/AskReddit/comments/9hzlya/women_who_have_given_birth_whats_something_no_one/.json";
+//                String url1 = "https://www.reddit.com//r/AskReddit/comments/9hzlya/women_who_have_given_birth_whats_something_no_one/.json";
 
                 // mComments.addAll( processor.fetchComments() );
-                    // processor = new CommentProcessor(url)
-                // return "done"
+                // processor = new CommentProcessor(url)
 
-                Log.i("doInBackground>>>", url1);
+                String inputUrl = inputs[0];
+                Log.i("doInBackground", inputUrl);
 
                 // Get the contents of the Reddit Post
-                String dataStream = getComments1(url1);
+//                String dataStream = getComments1("https://www.reddit.com/r/sports/comments/9inlgv/vance_macdonald_with_one_of_my_favorite_stiff/.json");
+                String dataStream = getComments1(inputUrl);
 
                 try {
 
@@ -152,25 +159,42 @@ public class DetailFragment extends Fragment {
 
                 recyclerView1 = rootView.findViewById(R.id.rv_post_comments);
 
-                // TODO: 9/24 setAdapter is giving me a null pointer exception!
                 redditCommentsAdapter = new RedditCommentsAdapter( activity1, mComments);
-                recyclerView1.setAdapter(redditCommentsAdapter);
-
                 linearLayoutManager1 = new LinearLayoutManager(getContext());
 
                 recyclerView1.setLayoutManager(linearLayoutManager1);
+                recyclerView1.setNestedScrollingEnabled(false); // can't scroll inside the Adapter's Layoutfile
+
+                recyclerView1.setAdapter(redditCommentsAdapter);
 
 
-
-
-//                super.onPostExecute(result);
             } // onPostExecute()
 
-        } // class GetRedditComments
+        } // GetRedditComments extends AsyncTask
 
-        GetRedditComments getRedditComments = new GetRedditComments();
-        getRedditComments.execute(); // TODO: put a URL here
+        if (savedInstanceState == null) {
 
+            GetRedditComments getRedditComments = new GetRedditComments();
+
+            Log.i("commentUrl>>>", commentUrl);
+            getRedditComments.execute(commentUrl); // TODO: put a URL here
+
+        } else {
+            // get data out of ParcelableArrrayList
+
+            // make a new Adapter
+
+            // RecyclerView.setAdapter()
+            // RecyclerView.setLayout()
+            // RecyclerView.setNestedScrolling(false)
+        }
+
+
+
+        // TODO: add setOnClickListener()
+
+
+        // TODO: add Google Ads
 
         return rootView;
     } // onCreateView()

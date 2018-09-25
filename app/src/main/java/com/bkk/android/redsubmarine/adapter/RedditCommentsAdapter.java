@@ -1,6 +1,7 @@
 package com.bkk.android.redsubmarine.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -39,63 +40,111 @@ public class RedditCommentsAdapter extends RecyclerView.Adapter<RedditCommentsAd
     } // clearData
 
 
-    // need 3 OVERRIDES
     @Override
     public AsdfViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-//        Context context = viewGroup.getContext();
+
+        Context context1 = viewGroup.getContext();
+
+        // why does these code below only show 1 comment?
 //        int layout1 = R.layout.item_redditcomments_adapter;
 //        LayoutInflater inflater = LayoutInflater.from(context);
 //        boolean shouldAttachToParentImmediately = false;
 //
 //        View view = inflater.inflate(layout1, viewGroup, shouldAttachToParentImmediately);
-//        RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view);
-//        return  recyclerViewHolder;
+//        AsdfViewHolder asdfViewHolder = new AsdfViewHolder(view);
+//        return  asdfViewHolder;
 
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_redditcomments_adapter, null);
-        final AsdfViewHolder recyclerViewHolder = new AsdfViewHolder(view);
-        return recyclerViewHolder;
-    }
+        View view = LayoutInflater
+                .from(context1)
+                .inflate(R.layout.item_redditcomments_adapter, null);
+
+        AsdfViewHolder asdfViewHolder = new AsdfViewHolder(view);
+
+        return asdfViewHolder;
+
+    } // onCreateViewHolder()
+
 
     @Override
-    public void onBindViewHolder(AsdfViewHolder recyclerViewHolder, int position) {
+    public void onBindViewHolder(AsdfViewHolder asdfViewHolder, int position) {
 
         // get 1 Reddit post
         RedditComments redditComments1 = mRedditComments.get(position);
 
-        recyclerViewHolder.author.setText(redditComments1.getAuthor());
-        // TODO: add 3 more things here
+        asdfViewHolder.author.setText(redditComments1.getAuthor());
+        asdfViewHolder.votes.setText(redditComments1.getVotes());
+        asdfViewHolder.commentText.setText(redditComments1.getText());
+        asdfViewHolder.postedDate.setText(redditComments1.getPostedOn());
+
+        // adding "left padding" to the comments if it is a reply to a previous comment
+        asdfViewHolder.linearLayout2.setPadding( redditComments1.getLevel() * 27, 0, 0, 0);
+
+        // adding color to differentiate each "comment reply"
+
+        switch ( redditComments1.getLevel() ) {
+
+            case 0:
+                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF530D"));
+                break;
+
+            case 1:
+                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#E82C0C"));
+                break;
+
+            case 2:
+                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF0000"));
+                break;
+
+            case 3:
+                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#E80C7A"));
+                break;
+
+            case 4:
+                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF0DFF"));
+                break;
+
+//            case 5:
+//                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF680E"));
+//                break;
+//
+//            case 6:
+//                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF7A0C"));
+//                break;
+
+                // do not include "default case"
+
+        } // switch
 
     } // onBindViewHolder()
 
     @Override
     public int getItemCount() {
-//        return (mRedditComments != null) ? mRedditComments.size() : 0;
-        return mRedditComments.size();
+        return (mRedditComments != null) ? mRedditComments.size() : 0;
     }
 
 
-    // put a class here
     public class AsdfViewHolder extends RecyclerView.ViewHolder {
 
         // class variables
         TextView author;
-//        TextView commentText;
-//        TextView postedDate;
-//        TextView votes;
+        TextView commentText;
+        TextView postedDate;
+        TextView votes;
 
-//        LinearLayout linearLayout;
-//        RelativeLayout commentLevel;
+        LinearLayout linearLayout2;
+        RelativeLayout commentLevel2;
 
         // constructor
         public AsdfViewHolder(View itemView) {
             super(itemView);
 
             this.author = itemView.findViewById(R.id.tv_author);
-//            this.commentText = itemView.findViewById(R.id.tv_commentText);
-//            this.postedDate = itemView.findViewById(R.id.tv_postedDate);
-//            this.votes = itemView.findViewById(R.id.tv_votes_adapter_item);
-//            this.linearLayout = itemView.findViewById(R.id.linearLayout2_comment_adapter);
-//            this.commentLevel = itemView.findViewById(R.id.relativeLayout2_comment_adapter);
+            this.commentText = itemView.findViewById(R.id.tv_commentText);
+            this.postedDate = itemView.findViewById(R.id.tv_postedDate);
+            this.votes = itemView.findViewById(R.id.tv_votes_adapter_item);
+
+            this.linearLayout2 = itemView.findViewById(R.id.linearLayout2_comment_adapter);
+            this.commentLevel2 = itemView.findViewById(R.id.relativeLayout2_comment_adapter);
         }
 
     } // class AsdfViewHolder
