@@ -32,6 +32,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.RedditCommentsAdapter;
+import com.bkk.android.redsubmarine.database.AppDatabase;
+import com.bkk.android.redsubmarine.database.RedditPostEntry;
 import com.bkk.android.redsubmarine.model.RedditComments;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.squareup.picasso.Picasso;
@@ -61,10 +63,14 @@ public class DetailFragment extends Fragment {
     private static final String CLASS_TAG = DetailFragment.class.getSimpleName();
     private static final String LOG_TAG = "ttt>>>: ";
 
+    Boolean postSaveState;
+
     ArrayList<RedditComments> mComments = new ArrayList<>();
     RedditCommentsAdapter redditCommentsAdapter;
     LinearLayoutManager linearLayoutManager1;
     RecyclerView recyclerView1;
+
+    private AppDatabase mDb;
 
     // ButterKnife "binding"
     // do not use the same "BindView name" and the name of the "UI variable", you will NULL POINTER EXCEPTION
@@ -108,6 +114,9 @@ public class DetailFragment extends Fragment {
         tv_votes.setText( String.valueOf(redditPost1.getScore()) );
         tv_comments_count.setText( String.valueOf(redditPost1.getNumberOfComments()) );
         tv_post_title.setText(redditPost1.getTitle());
+
+        // getting a copy of Room database
+        mDb = AppDatabase.getsInstance( activity1.getApplicationContext() );
 
 
         // https://stackoverflow.com/questions/21579918/retrieving-comments-from-reddits-api
@@ -250,39 +259,45 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                /*
-                String title;
-                String author;
-                String permalink;
-                int score;
-                int numberOfComments;
-                String url;
-                String thumbnail;
-                long postedDate;
-                postId
-                String subreddit;
-                String id;
-                String subreddit_name_prefixed;
-
-                imageUrl
-                favorite
-                */
-
                 // TODO: to be implemented 9/26
                 // https://classroom.udacity.com/nanodegrees/nd801/parts/9bb83157-0407-47dc-b0c4-c3d4d7dc66df/modules/3c3871cd-e3e7-4c6c-a845-a09f7fc83855/lessons/7ef37c82-7a52-40b5-b557-c8b7243980c4/concepts/2f762464-2d32-467c-8e39-e744700f310d#
 
-                // first, get data to saved into the database
-//        .getId
+//                if (true) { // << the post is not saved
+//
+//                    // first, get data to saved into the database
+                    RedditPostEntry redditPostEntry1
+                            = new RedditPostEntry( redditPost1.getTitle()
+                            , redditPost1.getThumbnail()
+                            , redditPost1.getUrl()
+                            , redditPost1.getSubreddit()
+                            , redditPost1.getAuthor()
+                            , redditPost1.getPermalink()
+                            , redditPost1.getId()
+                            , redditPost1.getSubreddit_name_prefixed()
+                            , redditPost1.getScore()
+                            , redditPost1.getNumberOfComments()
+                            , redditPost1.getPostedDate()
+                            , redditPost1.getOver18()
+                    );
 
-                // second, make a new RedditPost object
-                RedditPost redditPost2 = new RedditPost(stuff);
+                    // get database object
+                    mDb.redditPostDao().insertRedditPost(redditPostEntry1);
 
-                // get database object
-                mDb.RedditPostDao().insertRedditPost(redditPost2);
+                    save_pic_button.setSelected(true); // TODO: not visible
+//                    postSaveState = true;
 
-                finish(); // << might not need this
+                    Toast.makeText(getContext(), "RedditPost saved", Toast.LENGTH_SHORT).show();
 
-//                Toast.makeText(getContext(), "ffffffff", Toast.LENGTH_SHORT).show();
+                    ArrayList<RedditPostEntry> asdf1 =  (ArrayList) mDb.redditPostDao().loadAllSavedRedditPost();
+                    Log.i("ASDF", asdf1.get(1).getPost_id() );
+
+//                } else {
+
+//                    Toast.makeText(getContext(), "RedditPost NOT SAVED", Toast.LENGTH_SHORT).show();
+//                }
+
+
+
             } // onClick()
         }); // save_pic_button.setOnClickListener()
 
