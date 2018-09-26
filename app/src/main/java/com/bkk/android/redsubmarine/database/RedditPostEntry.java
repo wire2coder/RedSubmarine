@@ -1,48 +1,58 @@
-package com.bkk.android.redsubmarine.model;
+package com.bkk.android.redsubmarine.database;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
-public class RedditPost implements Parcelable {
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
+
+// this is a TABLE name, TABLE for the Database
+@Entity(tableName = "redditpost")
+public class RedditPostEntry {
 
     // member variables
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
     private String title;
     private String thumbnail;
     private String url;
     private String subreddit;
     private String author;
     private String permalink;
-    private String id;
+    private String post_id; // << just id inside RedditPost.java
     private String subreddit_name_prefixed;
-
     private int score;
     private int numberOfComments;
     private long postedDate;
     private Boolean over18;
 
 
-    // default Constructor
-    public RedditPost(String title, String thumbnail, String url,
-                      String subreddit, String author, String permalink,
-                      String id, String subreddit_name_prefixed,
-                      int score, int numberOfComments, long postedDate, Boolean over18) {
-
+    // Constructor
+    public RedditPostEntry(String title, String thumbnail, String url, String subreddit, String author, String permalink, String post_id, String subreddit_name_prefixed, int score, int numberOfComments, long postedDate, Boolean over18) {
         this.title = title;
         this.thumbnail = thumbnail;
         this.url = url;
         this.subreddit = subreddit;
         this.author = author;
         this.permalink = permalink;
-        this.id = id;
+        this.post_id = post_id;
         this.subreddit_name_prefixed = subreddit_name_prefixed;
         this.score = score;
         this.numberOfComments = numberOfComments;
         this.postedDate = postedDate;
         this.over18 = over18;
-    }
+    } // Constructor
 
 
     // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -91,12 +101,12 @@ public class RedditPost implements Parcelable {
         this.permalink = permalink;
     }
 
-    public String getId() {
-        return id;
+    public String getPost_id() {
+        return post_id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPost_id(String post_id) {
+        this.post_id = post_id;
     }
 
     public String getSubreddit_name_prefixed() {
@@ -140,62 +150,4 @@ public class RedditPost implements Parcelable {
     }
 
 
-    // Parcel code
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.title);
-        dest.writeString(this.thumbnail);
-        dest.writeString(this.url);
-        dest.writeString(this.subreddit);
-        dest.writeString(this.author);
-        dest.writeString(this.permalink);
-        dest.writeString(this.id);
-        dest.writeString(this.subreddit_name_prefixed);
-        dest.writeInt(this.score);
-        dest.writeInt(this.numberOfComments);
-        dest.writeLong(this.postedDate);
-        dest.writeValue(this.over18);
-    }
-
-    // Parcel empty constructor
-    public RedditPost() {
-    }
-
-    protected RedditPost(Parcel in) {
-        this.title = in.readString();
-        this.thumbnail = in.readString();
-        this.url = in.readString();
-        this.subreddit = in.readString();
-        this.author = in.readString();
-        this.permalink = in.readString();
-        this.id = in.readString();
-        this.subreddit_name_prefixed = in.readString();
-        this.score = in.readInt();
-        this.numberOfComments = in.readInt();
-        this.postedDate = in.readLong();
-        this.over18 = (Boolean) in.readValue(Boolean.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<RedditPost> CREATOR = new Parcelable.Creator<RedditPost>() {
-        @Override
-        public RedditPost createFromParcel(Parcel source) {
-            return new RedditPost(source);
-        }
-
-        @Override
-        public RedditPost[] newArray(int size) {
-            return new RedditPost[size];
-        }
-    };
-
-} // class RedditPost implements Parcelable
-
-
-
-
-
+} // class RedditPostEntry

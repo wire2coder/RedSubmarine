@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-
         mRecyclerView = findViewById(R.id.rv_redditPosts);
         mRecyclerView.setHasFixedSize(true);
 
@@ -250,5 +249,9 @@ public class MainActivity extends AppCompatActivity {
 
         } // onItemClick()
     };
+
+    public void onSaveButtonClicked() {
+       // TODO: 9/26, load "favorited reddit post"
+    }
 
 } // class MainActivity

@@ -250,8 +250,37 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                // TODO: 9/25 do saveToDatabase() when you click on the "Save button"
+                /*
+                String title;
+                String author;
+                String permalink;
+                int score;
+                int numberOfComments;
+                String url;
+                String thumbnail;
+                long postedDate;
+                postId
+                String subreddit;
+                String id;
+                String subreddit_name_prefixed;
 
+                imageUrl
+                favorite
+                */
+
+                // TODO: to be implemented 9/26
+                // https://classroom.udacity.com/nanodegrees/nd801/parts/9bb83157-0407-47dc-b0c4-c3d4d7dc66df/modules/3c3871cd-e3e7-4c6c-a845-a09f7fc83855/lessons/7ef37c82-7a52-40b5-b557-c8b7243980c4/concepts/2f762464-2d32-467c-8e39-e744700f310d#
+
+                // first, get data to saved into the database
+//        .getId
+
+                // second, make a new RedditPost object
+                RedditPost redditPost2 = new RedditPost(stuff);
+
+                // get database object
+                mDb.RedditPostDao().insertRedditPost(redditPost2);
+
+                finish(); // << might not need this
 
 //                Toast.makeText(getContext(), "ffffffff", Toast.LENGTH_SHORT).show();
             } // onClick()
