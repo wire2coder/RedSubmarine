@@ -1,6 +1,7 @@
 package com.bkk.android.redsubmarine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -64,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Menu sortMenu;
+    private Menu mDrawerMenu;
     private DrawerLayout mDrawerLayout;
+    public SharedPreferences mSharedPreferences1;
 
     private AppDatabase mAppDatabase1;
 
@@ -77,8 +80,12 @@ public class MainActivity extends AppCompatActivity {
         // Stetho setup, for DEBUGGING
         Stetho.initializeWithDefaults(this);
 
+        // getting "SharedPreferences"
+        mSharedPreferences1 = getSharedPreferences("MainActivitySharePreferences", MODE_PRIVATE);
+
         // getting a copy of Room database
         mAppDatabase1 = AppDatabase.getsInstance( getApplicationContext() );
+
 
         // Set the toolbar as the action bar
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -92,6 +99,15 @@ public class MainActivity extends AppCompatActivity {
         // Navigation Drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView drawer_view1 = findViewById(R.id.drawer_view1);
+
+
+//        int groupID = mDrawerMenu.getItem(0).getGroupId(); << might not need this
+//        Log.i("groupID", String.valueOf(groupID)); << might not need this
+//        mDrawerMenu.removeGroup(500); // << why is it 500? << might not need this
+
+        mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
+        mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
+        // TODO: 9/27, show a list of sub-reddits in the Navigation Drawer
 
         // Open the left-hand-side Drawer for "Favorites"
         drawer_view1.setNavigationItemSelectedListener(
@@ -108,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                             // get data from database
                             mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
 
-                            // initLoader
+                            // "initLoader"
                             ArrayList<RedditPostEntry> asdf1 =  (ArrayList) mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
                             Log.i("asdf1.size()", String.valueOf( asdf1.size() )  );
 
