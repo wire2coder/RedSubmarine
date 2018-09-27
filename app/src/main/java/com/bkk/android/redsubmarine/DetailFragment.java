@@ -288,8 +288,7 @@ public class DetailFragment extends Fragment {
 
                     Toast.makeText(getContext(), "RedditPost saved", Toast.LENGTH_SHORT).show();
 
-                    ArrayList<RedditPostEntry> asdf1 =  (ArrayList) mDb.redditPostDao().loadAllSavedRedditPost();
-                    Log.i("ASDF", asdf1.get(1).getPost_id() );
+
 
 //                } else {
 

@@ -40,9 +40,6 @@ public class DetailActivity extends AppCompatActivity {
 //        if (savedInstanceState == null) {
 
 
-            // TODO: 9/18 make a DetailFragment again
-            // make a new DetailFragment
-
         DetailFragment detailFragment = new DetailFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
 

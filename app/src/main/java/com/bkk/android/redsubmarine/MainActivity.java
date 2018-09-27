@@ -31,8 +31,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
+import com.bkk.android.redsubmarine.database.AppDatabase;
+import com.bkk.android.redsubmarine.database.RedditPostEntry;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crash.component.FirebaseCrashRegistrar;
 
@@ -63,14 +66,22 @@ public class MainActivity extends AppCompatActivity {
     private Menu sortMenu;
     private DrawerLayout mDrawerLayout;
 
+    private AppDatabase mAppDatabase1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Stetho setup, for DEBUGGING
+        Stetho.initializeWithDefaults(this);
+
+        // getting a copy of Room database
+        mAppDatabase1 = AppDatabase.getsInstance( getApplicationContext() );
+
         // Set the toolbar as the action bar
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Enable the app bar's "home" button
@@ -80,18 +91,66 @@ public class MainActivity extends AppCompatActivity {
 
         // Navigation Drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView drawer_view1 = findViewById(R.id.drawer_view1);
 
-        navigationView.setNavigationItemSelectedListener(
+        // Open the left-hand-side Drawer for "Favorites"
+        drawer_view1.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-                        // set items as selected to persist high light
-                        menuItem.setCheckable(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
+                        if (menuItem.getGroupId() == R.id.groupFav) { // /menu/drawer_view.xml
 
+                            // clear the data in the ArrayList
+                            redditPosts.clear();
+                            Log.i(LOG_TAG, "redditPosts.clear()");
+
+                            // get data from database
+                            mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
+
+                            // initLoader
+                            ArrayList<RedditPostEntry> asdf1 =  (ArrayList) mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
+                            Log.i("asdf1.size()", String.valueOf( asdf1.size() )  );
+
+                            // need a for loop to loop through ArrayList
+                            for (int x=0; x < asdf1.size(); x++) {
+                                asdf1.get(x).getId();
+                                Log.i("asdf1.getId(): ", String.valueOf(asdf1.get(x).getId()));
+
+                                RedditPost redditPost = new RedditPost(
+                                        asdf1.get(x).getTitle(),
+                                        asdf1.get(x).getThumbnail(),
+                                        asdf1.get(x).getUrl(),
+                                        asdf1.get(x).getSubreddit(),
+                                        asdf1.get(x).getAuthor(),
+                                        asdf1.get(x).getPermalink(),
+                                        asdf1.get(x).getPost_id(),
+                                        asdf1.get(x).getSubreddit_name_prefixed(),
+                                        asdf1.get(x).getScore(),
+                                        asdf1.get(x).getNumberOfComments(),
+                                        asdf1.get(x).getPostedDate(),
+                                        asdf1.get(x).getOver18()
+                                );
+
+                                // now add to existing array list
+                                redditPosts.add(redditPost);
+
+                            } // for
+
+                            // now put ArrayList into Adapter
+                            mAdapter.swapData(redditPosts);
+
+                            // set the title of the "top bar"
+                            toolbar.setTitle("My Favorites Post");
+
+                            // set items as selected to persist high light
+                            // menuItem.setCheckable(true);
+
+                            // close drawer when item is tapped
+                            mDrawerLayout.closeDrawers();
+
+                            return true; // EAT the "event"
+                        }
                         // Add code here to update the UI based on the item selected. For example, swap UI fragments here
                         return false;
                     }
