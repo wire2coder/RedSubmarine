@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -20,8 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,7 +28,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
 import com.bkk.android.redsubmarine.database.AppDatabase;
@@ -37,14 +35,10 @@ import com.bkk.android.redsubmarine.database.RedditPostEntry;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.crash.component.FirebaseCrashRegistrar;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,26 +55,26 @@ public class MainActivity extends AppCompatActivity {
     private static final String BASE_URL = "https://www.reddit.com/r/";
     private static String REDDIT_URL_NEW = "https://www.reddit.com/r/subreddit/new.json?sort=new";
     private static String REDDIT_URL2 = "https://www.reddit.com//.json";
+    private String subRedditName = "";
 
-    private TextView tv_data1;
     private List<RedditPost> redditPosts = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
     private MainActivityAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private Menu sortMenu;
-    private Menu mDrawerMenu;
-
-    private DrawerLayout mDrawerLayout;
     public SharedPreferences mSharedPreferences1;
-
     private AppDatabase mAppDatabase1;
 
-    @BindView(R.id.drawer_view1) NavigationView drawer_view1;
-    private Menu subRedditMenu;
-
+    private DrawerLayout mDrawerLayout;
     private Toolbar toolbar;
+        private Menu sortMenu;
+        private Menu mDrawerMenu;
+        private SearchView mSearchView;
+
+        @BindView(R.id.drawer_view1) NavigationView drawer_view1;
+        private Menu subRedditMenu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -346,10 +340,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.sort_menu, menu);
+        inflater.inflate(R.menu.search_and_sort_menu, menu); // << this is an XML file
+
+        // for the Search button in reddit_post_search_menuarch_menu.xml
+        MenuItem searchItem = menu.findItem(R.id.item_search_menu);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.item_search_menu));
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mSearchView.clearFocus();
+
+                searchForRedditPost(subRedditName, query);
+
+                // false if the SearchView should perform the default action of showing any suggestions if available,
+                // true if the action was handled by the listener.
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         return true;
-    }
+    } // onCreateOptionsMenu()
+
+    public void searchForRedditPost(String currentSubRedditItem, String searchQuery) {
+
+        subRedditName = currentSubRedditItem;
+        toolbar.setTitle(subRedditName);
+
+        String searchString1 = "search.json?q" + searchQuery;
+        Log.i("searchString1", searchString1);
+
+        if (currentSubRedditItem.equals("home") ) {
+//            TODO: 9/30 set up Search
+        }
+
+    } // searchForRedditPost()
 
     public MainActivityAdapter.OnItemClickListener redditPostClick1 = new MainActivityAdapter.OnItemClickListener() {
 
