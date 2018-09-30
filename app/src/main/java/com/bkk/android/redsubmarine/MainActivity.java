@@ -44,8 +44,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "ttt>>>: ";
 
     private static final String BASE_URL = "https://www.reddit.com/r/";
-    private static final String REDDIT_URL1 = "https://www.reddit.com/r/subreddit/new.json?sort=new";
-    private static final String REDDIT_URL2 = "https://www.reddit.com//.json";
+    private static String REDDIT_URL_NEW = "https://www.reddit.com/r/subreddit/new.json?sort=new";
+    private static String REDDIT_URL2 = "https://www.reddit.com//.json";
 
     private TextView tv_data1;
     private List<RedditPost> redditPosts = new ArrayList<>();
@@ -66,11 +71,16 @@ public class MainActivity extends AppCompatActivity {
 
     private Menu sortMenu;
     private Menu mDrawerMenu;
+
     private DrawerLayout mDrawerLayout;
     public SharedPreferences mSharedPreferences1;
 
     private AppDatabase mAppDatabase1;
 
+    @BindView(R.id.drawer_view1) NavigationView drawer_view1;
+    private Menu subRedditMenu;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
         // Stetho setup, for DEBUGGING
         Stetho.initializeWithDefaults(this);
 
+        // Set up ButterKnife
+        ButterKnife.bind(this);
+
         // getting "SharedPreferences"
         mSharedPreferences1 = getSharedPreferences("MainActivitySharePreferences", MODE_PRIVATE);
 
@@ -88,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Set the toolbar as the action bar
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Enable the app bar's "home" button
@@ -98,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Navigation Drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView drawer_view1 = findViewById(R.id.drawer_view1);
 
+        mDrawerMenu = drawer_view1.getMenu();
 
 //        int groupID = mDrawerMenu.getItem(0).getGroupId(); << might not need this
 //        Log.i("groupID", String.valueOf(groupID)); << might not need this
@@ -107,15 +120,28 @@ public class MainActivity extends AppCompatActivity {
 
         mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
         mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
-        // TODO: 9/27, show a list of sub-reddits in the Navigation Drawer
+        // DONE: 9/27, show a list of sub-reddits in the Navigation Drawer
+
+        // TODO: 9/28, put the Strings into "SharePreferrences"
+        String string1 = "home,all,announcements,Art,AskReddit,askscience,aww,blog,books,creepy,dataisbeautiful,DIY,Documentaries,EarthPorn,explainlikeimfive,Fitness,food,funny,Futurology,gadgets,gaming,GetMotivated,gifs,history,IAmA,InternetIsBeautiful,Jokes,LifeProTips,listentothis,mildlyinteresting,movies,Music,news,nosleep,nottheonion,OldSchoolCool,personalfinance,philosophy,photoshopbattles,pics,science,Showerthoughts,space,sports,television,tifu,todayilearned,TwoXChromosomes,UpliftingNews,videos,worldnews,WritingPrompts";
+        List<String> subRedditList1 = Arrays.asList(string1.split(","));
+        Log.i("subRedditList1", subRedditList1.toString());
+
+        for (int x = 0; x < subRedditList1.size(); x++) {
+            MenuItem subRedditMenuItem = mDrawerMenu.add(subRedditList1.get(x));
+            subRedditMenuItem.setIcon(R.drawable.ic_reddit); // << used Reddit icon but it is brown.
+        } // for
+
+        drawer_view1.setItemIconTintList(null); // << make the Reddit item visible
+
 
         // Open the left-hand-side Drawer for "Favorites"
-        drawer_view1.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        drawer_view1.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
-                        if (menuItem.getGroupId() == R.id.groupFav) { // /menu/drawer_view.xml
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem1) {
+
+                        if (menuItem1.getGroupId() == R.id.groupFav) { // /menu/drawer_view.xml
 
                             // clear the data in the ArrayList
                             redditPosts.clear();
@@ -126,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
                             // "initLoader"
                             ArrayList<RedditPostEntry> asdf1 =  (ArrayList) mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
-                            Log.i("asdf1.size()", String.valueOf( asdf1.size() )  );
+//                            Log.i("asdf1.size()", String.valueOf( asdf1.size() )  );
 
                             // need a for loop to loop through ArrayList
                             for (int x=0; x < asdf1.size(); x++) {
@@ -150,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 // now add to existing array list
                                 redditPosts.add(redditPost);
-
                             } // for
 
                             // now put ArrayList into Adapter
@@ -162,16 +187,22 @@ public class MainActivity extends AppCompatActivity {
                             // set items as selected to persist high light
                             // menuItem.setCheckable(true);
 
-                            // close drawer when item is tapped
-                            mDrawerLayout.closeDrawers();
+//                            return true; // EAT the "event", if you use FALSE here, to execution won't flow down to mDrawerLayout.closeDrawers();
+                        } else {
 
-                            return true; // EAT the "event"
-                        }
-                        // Add code here to update the UI based on the item selected. For example, swap UI fragments here
-                        return false;
-                    }
-                }
-        );
+                            // TODO: add stuff here
+                            String subRedditName = menuItem1.toString();
+                            Log.i("subRedditName", subRedditName);
+                            updateMainActivity( subRedditName );
+
+                        } // else
+
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        return true; // EAT the "event"
+                    } //onNavigationMenuSelected()
+                }); // setNavigationItemSelectedListener()
 
 
         mRecyclerView = findViewById(R.id.rv_redditPosts);
@@ -180,21 +211,47 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        // making network request to Reddit
+        volleyRequest(REDDIT_URL2);
+
+    } // onCreate
+
+
+    // helper
+    public void updateMainActivity(String subRedditName) {
+
+        // Toolbar toolbar
+        toolbar.setTitle(subRedditName);
+
+        if ( subRedditName.equals("home") ) {
+            Log.i("subRedditName", "subRedditName == home");
+            volleyRequest(REDDIT_URL2); // << Reddit homepage with JSON response
+        } else {
+
+            volleyRequest("https://www.reddit.com/r/" + subRedditName + "/.json");
+
+        } // else
+
+    } // updateMainActivity()
+
+
+    // helper
+    public void volleyRequest(String string_url) {
+
         mAdapter = new MainActivityAdapter(redditPosts, this);
-        mAdapter.SetOnItemClickListener(redditPostClick1); // >> do something when you click on a "View item"
         mRecyclerView.setAdapter(mAdapter); // >> mAdapter is EMPTY at this point
+        mAdapter.SetOnItemClickListener(redditPostClick1); // >> do something when you click on a "View item"
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.GET, REDDIT_URL2
-                , (String) null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.GET, string_url
+                ,(String) null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 Log.d(LOG_TAG, response.toString());
-
-//                mAdapter.clearAdapter();
+                mAdapter.clearAdapter();
 
                 // parse JSON data
                 // data(JSON object) >> children(JSON array) >> data(JSON object)
@@ -242,17 +299,16 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(LOG_TAG, "Error: " + error.getMessage());
-            }
+            public void onErrorResponse(VolleyError e1) {
+                VolleyLog.d(LOG_TAG, "onErrorResponse: " + e1.getMessage());
+            } // onErrorResponse()
 
         });
 
         // Add the request to the RequestQueue, what is this "Queue" ?
         queue.add(request1);
 
-
-    } // onCreate
+    } // volleyRequest()
 
 
     // Open the drawer when the button is tapped
@@ -308,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
 
             final Intent intent1 = new Intent(getBaseContext(), DetailActivity.class);
             intent1.putExtras(bundle1);
-            startActivity(intent1);
+            startActivity(intent1); // Start DetailActivity.java
 
 //            bundle1.putString("title", redditPost1.getThumbnail());
 //            bundle1.putString("thumbnail", redditPost1.getThumbnail());
@@ -324,9 +380,5 @@ public class MainActivity extends AppCompatActivity {
 
         } // onItemClick()
     };
-
-    public void onSaveButtonClicked() {
-       // TODO: 9/26, load "favorited reddit post"
-    }
 
 } // class MainActivity
