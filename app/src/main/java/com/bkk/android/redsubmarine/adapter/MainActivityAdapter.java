@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -82,9 +83,9 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
         holder.tv_post_title.setText(redditPost.getTitle());
 
         // use Picasso here instead of Volley ImageLoader
-        Picasso.get()
-                .load(redditPost.getThumbnail())
-                .into(holder.iv_thumbnail);
+            Picasso.get()
+                    .load(redditPost.getThumbnail())
+                    .into(holder.iv_thumbnail);
 
         holder.tv_vote_counter.setText( String.valueOf(redditPost.getScore()) );
         holder.tv_comments_counter.setText( String.valueOf(redditPost.getNumberOfComments()));

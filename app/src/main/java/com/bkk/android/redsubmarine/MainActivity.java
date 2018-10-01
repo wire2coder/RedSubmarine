@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://www.reddit.com/r/";
     private static String REDDIT_URL_NEW = "https://www.reddit.com/r/subreddit/new.json?sort=new";
-    private static String REDDIT_URL2 = "https://www.reddit.com//.json";
+    private static String REDDIT_URL2 = "https://www.reddit.com/.json";
     private String subRedditName = "";
 
     private List<RedditPost> redditPosts = new ArrayList<>();
@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         // Set up ButterKnife
         ButterKnife.bind(this);
 
+        makeAToolBar();
+
         // getting "SharedPreferences"
         mSharedPreferences1 = getSharedPreferences("MainActivitySharePreferences", MODE_PRIVATE);
 
@@ -94,14 +96,6 @@ public class MainActivity extends AppCompatActivity {
         mAppDatabase1 = AppDatabase.getsInstance( getApplicationContext() );
 
 
-        // Set the toolbar as the action bar
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Enable the app bar's "home" button
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true); // << this line shows an arrow pointing left
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu); // << this line replaced the "left pointing arrow" with the "3 lines icon"
 
         // Navigation Drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -184,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
 //                            return true; // EAT the "event", if you use FALSE here, to execution won't flow down to mDrawerLayout.closeDrawers();
                         } else {
 
-                            // TODO: add stuff here
                             String subRedditName = menuItem1.toString();
                             Log.i("subRedditName", subRedditName);
                             updateMainActivity( subRedditName );
@@ -206,16 +199,38 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // making network request to Reddit
-        volleyRequest(REDDIT_URL2);
+//        volleyRequest(REDDIT_URL2);
+
+        // Program starting point!
+        updateMainActivity("home");
 
     } // onCreate
 
 
-    // helper
-    public void updateMainActivity(String subRedditName) {
+    private void makeAToolBar() {
+        // Set the toolbar as the action bar
+        toolbar = findViewById(R.id.toolbar1);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("put anything here");
 
-        // Toolbar toolbar
-        toolbar.setTitle(subRedditName);
+        // Enable the app bar's "home" button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // << this line shows an arrow pointing left
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu); // << this line replaced the "left pointing arrow" with the "3 lines icon"
+    }
+
+
+    // helper
+    // ~ updateList()
+    public void updateMainActivity(String subRedditName1) {
+
+        this.subRedditName = subRedditName1;
+        toolbar.setTitle(subRedditName1);
+
+        // clearing the search bar
+//        if ( mSearchView != null) {
+//            mSearchView.setQuery("", false);
+//            mSearchView.setIconified(true); // << show the search icon
+//        }
 
         if ( subRedditName.equals("home") ) {
             Log.i("subRedditName", "subRedditName == home");
@@ -319,24 +334,6 @@ public class MainActivity extends AppCompatActivity {
     } // onOptionsItemSelected()
 
 
-    // Google Crashlytics for a crash
-    public void forceACrash() {
-        // [START crash_force_crash]
-        Button crashButton = new Button(this);
-        crashButton.setText("Crash!");
-        crashButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Crashlytics.getInstance().crash(); // Force a crash
-            }
-        });
-
-        addContentView(crashButton, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        // [END crash_force_crash]
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -372,12 +369,27 @@ public class MainActivity extends AppCompatActivity {
         subRedditName = currentSubRedditItem;
         toolbar.setTitle(subRedditName);
 
-        String searchString1 = "search.json?q" + searchQuery;
-        Log.i("searchString1", searchString1);
+        String searchUrl;
+        String redditJson = "https://www.reddit.com/";
+        String searchString1 = "search.json?q=" + searchQuery;
+        Log.i("searchForRedditPost()", subRedditName);
+
 
         if (currentSubRedditItem.equals("home") ) {
-//            TODO: 9/30 set up Search
-        }
+            searchUrl = redditJson + searchString1;
+            Log.i("if1", subRedditName);
+
+            // TODO: turn off "reddit post sorting" here
+
+        } else {
+            // https://www.reddit.com/r/ + subRedditName + /search.json?q + searchQuery
+            searchUrl = redditJson + "r/" + subRedditName + "/search.json?q=" + searchQuery;
+            Log.i("if1", subRedditName);
+        } // else
+
+
+        Log.i("if1", searchUrl);
+        volleyRequest(searchUrl);
 
     } // searchForRedditPost()
 
@@ -410,5 +422,25 @@ public class MainActivity extends AppCompatActivity {
 
         } // onItemClick()
     };
+
+
+    // helper
+    // Google Crashlytics for a crash
+    public void forceACrash() {
+        // [START crash_force_crash]
+        Button crashButton = new Button(this);
+        crashButton.setText("Crash!");
+        crashButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Crashlytics.getInstance().crash(); // Force a crash
+            }
+        });
+
+        addContentView(crashButton, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        // [END crash_force_crash]
+    }
+
 
 } // class MainActivity
