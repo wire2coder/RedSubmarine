@@ -25,10 +25,11 @@ public class RedditPostEntry {
     private int numberOfComments;
     private long postedDate;
     private Boolean over18;
+    private Boolean isFavorited;
 
 
     // Constructor
-    public RedditPostEntry(String title, String thumbnail, String url, String subreddit, String author, String permalink, String post_id, String subreddit_name_prefixed, int score, int numberOfComments, long postedDate, Boolean over18) {
+    public RedditPostEntry(String title, String thumbnail, String url, String subreddit, String author, String permalink, String post_id, String subreddit_name_prefixed, int score, int numberOfComments, long postedDate, Boolean over18, Boolean isFavorited) {
         this.title = title;
         this.thumbnail = thumbnail;
         this.url = url;
@@ -41,6 +42,7 @@ public class RedditPostEntry {
         this.numberOfComments = numberOfComments;
         this.postedDate = postedDate;
         this.over18 = over18;
+        this.isFavorited = isFavorited;
     } // Constructor
 
 
@@ -147,6 +149,14 @@ public class RedditPostEntry {
 
     public void setOver18(Boolean over18) {
         this.over18 = over18;
+    }
+
+    public Boolean getIsFavorited() {
+        return isFavorited;
+    }
+
+    public void setIsFavorited(Boolean favorited) {
+        isFavorited = favorited;
     }
 
 

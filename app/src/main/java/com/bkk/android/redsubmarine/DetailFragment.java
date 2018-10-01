@@ -262,6 +262,8 @@ public class DetailFragment extends Fragment {
                 // TODO: to be implemented 9/26
                 // https://classroom.udacity.com/nanodegrees/nd801/parts/9bb83157-0407-47dc-b0c4-c3d4d7dc66df/modules/3c3871cd-e3e7-4c6c-a845-a09f7fc83855/lessons/7ef37c82-7a52-40b5-b557-c8b7243980c4/concepts/2f762464-2d32-467c-8e39-e744700f310d#
 
+                // TODO: 10/1 read from database here and check
+
 //                if (true) { // << the post is not saved
 //
 //                    // first, get data to saved into the database
@@ -278,6 +280,7 @@ public class DetailFragment extends Fragment {
                             , redditPost1.getNumberOfComments()
                             , redditPost1.getPostedDate()
                             , redditPost1.getOver18()
+                            , true
                     );
 
                     // get database object
