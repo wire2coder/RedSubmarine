@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -76,7 +77,8 @@ public class DetailFragment extends Fragment {
     // do not use the same "BindView name" and the name of the "UI variable", you will NULL POINTER EXCEPTION
     private Unbinder unBinder;
     @BindView(R.id.fragment_share_button) ImageView share_pic_button;
-    @BindView(R.id.fragment_save_button) ImageView save_pic_button;
+//    @BindView(R.id.fragment_save_button) ImageView save_pic_button;
+    @BindView(R.id.fragment_save_button) CheckBox save_pic_button;
 
     @BindView(R.id.fragment_header_image) ImageView imageView1;
     @BindView(R.id.fragment_votes) TextView tv_votes;
@@ -125,6 +127,7 @@ public class DetailFragment extends Fragment {
 
             // volleyRequest(); << this doesn't work
             // using regular AsyncTask instead
+
 
         class GetRedditComments extends AsyncTask<String, Void, String> {
 
@@ -255,18 +258,32 @@ public class DetailFragment extends Fragment {
         }); // fragment_share_button.setOnClickListener()
 
 
+        // TODO: 10/2 read from database here and check
+        // TODO: do database reading here, get the ID of this post and load it to check if it is "Favorited"
+        final RedditPostEntry redditPostEntry11 = mDb.redditPostDao().loadRedditPostEntryById( redditPost1.getId()  );
+        Log.i(LOG_TAG, redditPost1.getId());
+        Log.i(LOG_TAG, String.valueOf( redditPostEntry11.getIsFavorited() )  );
+
+        if ( redditPostEntry11.getIsFavorited() ) {
+            save_pic_button.setChecked(true);
+        } else {
+            save_pic_button.setChecked(false);
+        }
+
+
         save_pic_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                // TODO: to be implemented 9/26
-                // https://classroom.udacity.com/nanodegrees/nd801/parts/9bb83157-0407-47dc-b0c4-c3d4d7dc66df/modules/3c3871cd-e3e7-4c6c-a845-a09f7fc83855/lessons/7ef37c82-7a52-40b5-b557-c8b7243980c4/concepts/2f762464-2d32-467c-8e39-e744700f310d#
 
-                // TODO: 10/1 read from database here and check
+                if ( redditPostEntry11.getIsFavorited() ) { // << the post is saved
 
-//                if (true) { // << the post is not saved
-//
-//                    // first, get data to saved into the database
+                    // delete the post from database
+                    //save_pic_button.setChecked(true);
+
+                } else {
+
+                    //                    // first, get data to saved into the database
                     RedditPostEntry redditPostEntry1
                             = new RedditPostEntry( redditPost1.getTitle()
                             , redditPost1.getThumbnail()
@@ -286,17 +303,9 @@ public class DetailFragment extends Fragment {
                     // get database object
                     mDb.redditPostDao().insertRedditPost(redditPostEntry1);
 
-                    save_pic_button.setSelected(true); // TODO: not visible
-//                    postSaveState = true;
-
                     Toast.makeText(getContext(), "RedditPost saved", Toast.LENGTH_SHORT).show();
 
-
-
-//                } else {
-
-//                    Toast.makeText(getContext(), "RedditPost NOT SAVED", Toast.LENGTH_SHORT).show();
-//                }
+                }
 
 
 
@@ -305,6 +314,8 @@ public class DetailFragment extends Fragment {
 
 
         // TODO: add Google Ads
+
+
 
         return rootView;
     } // onCreateView()
@@ -380,27 +391,20 @@ public class DetailFragment extends Fragment {
 
     // helper
     public static HttpURLConnection createConnection(String url){
-
         try {
-
             HttpURLConnection httpURLConnection = (HttpURLConnection)new URL(url).openConnection();
             httpURLConnection.setReadTimeout(30000);
             httpURLConnection.setRequestProperty("User-Agent", "Firefox 50");
             return httpURLConnection;
-
         } catch(Exception e) {
-
             Log.d("CONNECTION FAILED", e.toString());
             return null;
-
         }
-
-    }
+    } // createConnection()
 
 
     // helper
     public static String getComments1(String url) {
-
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
 
@@ -414,16 +418,12 @@ public class DetailFragment extends Fragment {
             }
 
             bufferedReader.close();
-
             return stringBuffer.toString();
 
         } catch(Exception e) {
-
             Log.d(CLASS_TAG, "error: parseStream()");
             return null;
-
         }
-
     } // getComments1()
 
 
@@ -436,7 +436,7 @@ public class DetailFragment extends Fragment {
     @Override public void onDestroyView() {
         super.onDestroyView();
         unBinder.unbind();
-    }
+    } // onDestroyView()
 
 
 } // class DetailFragment

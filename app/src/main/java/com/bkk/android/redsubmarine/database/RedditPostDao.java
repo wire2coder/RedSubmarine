@@ -28,4 +28,8 @@ public interface RedditPostDao {
     @Delete()
     void deleteRedditPost(RedditPostEntry redditPostEntry);
 
+    // get 1 RedditPost
+    @Query("SELECT * FROM redditpost WHERE post_id = :post_id")
+    RedditPostEntry loadRedditPostEntryById(String post_id);
+
 } // class RedditPostDao

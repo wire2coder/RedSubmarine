@@ -129,7 +129,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem1) {
 
-                        if (menuItem1.getGroupId() == R.id.groupFav) { // /menu/drawer_view.xml
+                        // This is the action_favorites button
+                        // R.id.action_favorites
+                        // /menu/drawer_view.xml
+                        if (menuItem1.getGroupId() == R.id.groupFav) {
 
                             // clear the data in the ArrayList
                             redditPosts.clear();
@@ -216,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         // Enable the app bar's "home" button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // << this line shows an arrow pointing left
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu); // << this line replaced the "left pointing arrow" with the "3 lines icon"
-    }
+    } // makeAToolBar()
 
 
     // helper
@@ -236,9 +239,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("subRedditName", "subRedditName == home");
             volleyRequest(REDDIT_URL2); // << Reddit homepage with JSON response
         } else {
-
             volleyRequest("https://www.reddit.com/r/" + subRedditName + "/.json");
-
         } // else
 
     } // updateMainActivity()
@@ -392,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
         volleyRequest(searchUrl);
 
     } // searchForRedditPost()
+
 
     public MainActivityAdapter.OnItemClickListener redditPostClick1 = new MainActivityAdapter.OnItemClickListener() {
 

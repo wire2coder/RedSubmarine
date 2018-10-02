@@ -56,8 +56,6 @@ public class DetailActivity extends AppCompatActivity {
 
 //        }
 
-
-
     } // onCreate()
 
 
