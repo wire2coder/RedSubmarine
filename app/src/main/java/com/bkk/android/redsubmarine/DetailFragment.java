@@ -64,7 +64,7 @@ public class DetailFragment extends Fragment {
     private static final String CLASS_TAG = DetailFragment.class.getSimpleName();
     private static final String LOG_TAG = "ttt>>>: ";
 
-    Boolean postSaveState;
+    Boolean isFaved;
 
     ArrayList<RedditComments> mComments = new ArrayList<>();
     RedditCommentsAdapter redditCommentsAdapter;
@@ -86,7 +86,7 @@ public class DetailFragment extends Fragment {
     @BindView(R.id.fragment_post_title) TextView tv_post_title;
 
 
-//    required empty constructor
+//    required empty constructor for Fragment
     public DetailFragment() {
     }
 
@@ -119,6 +119,19 @@ public class DetailFragment extends Fragment {
 
         // getting a copy of Room database
         mDb = AppDatabase.getsInstance( activity1.getApplicationContext() );
+
+        // DONE: 10/2 read from database here and check do database reading here, get the ID of this post and load it to check if it is "Favorited"
+        final RedditPostEntry redditPostEntry11 = mDb.redditPostDao().loadRedditPostEntryById( redditPost1.getId()  );
+
+        if (redditPostEntry11 != null ) {
+            Log.i(LOG_TAG, String.valueOf( redditPostEntry11.getId() ) );
+            isFaved = true;
+            save_pic_button.setChecked(true);
+        } else {
+            Toast.makeText(getContext(), "redditPostEntry11 does not exist", Toast.LENGTH_SHORT).show();
+            isFaved = false;
+            save_pic_button.setChecked(false);
+        }
 
 
         // https://stackoverflow.com/questions/21579918/retrieving-comments-from-reddits-api
@@ -258,32 +271,12 @@ public class DetailFragment extends Fragment {
         }); // fragment_share_button.setOnClickListener()
 
 
-        // TODO: 10/2 read from database here and check
-        // TODO: do database reading here, get the ID of this post and load it to check if it is "Favorited"
-        final RedditPostEntry redditPostEntry11 = mDb.redditPostDao().loadRedditPostEntryById( redditPost1.getId()  );
-        Log.i(LOG_TAG, redditPost1.getId());
-        Log.i(LOG_TAG, String.valueOf( redditPostEntry11.getIsFavorited() )  );
-
-        if ( redditPostEntry11.getIsFavorited() ) {
-            save_pic_button.setChecked(true);
-        } else {
-            save_pic_button.setChecked(false);
-        }
-
-
         save_pic_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
-                if ( redditPostEntry11.getIsFavorited() ) { // << the post is saved
-
-                    // delete the post from database
-                    //save_pic_button.setChecked(true);
-
-                } else {
-
-                    //                    // first, get data to saved into the database
+                if ( isFaved == false ) { // << the post is not saved
+                    // first, get data to saved into the database
                     RedditPostEntry redditPostEntry1
                             = new RedditPostEntry( redditPost1.getTitle()
                             , redditPost1.getThumbnail()
@@ -297,24 +290,27 @@ public class DetailFragment extends Fragment {
                             , redditPost1.getNumberOfComments()
                             , redditPost1.getPostedDate()
                             , redditPost1.getOver18()
-                            , true
+                            , 1
                     );
 
                     // get database object
                     mDb.redditPostDao().insertRedditPost(redditPostEntry1);
 
-                    Toast.makeText(getContext(), "RedditPost saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "redditPostEntry11 saved", Toast.LENGTH_SHORT).show();
 
+                } else {
+                    // delete the post from database
+                    mDb.redditPostDao().deleteRedditPost(redditPostEntry11);
+
+                    Toast.makeText(getContext(), "redditPostEntry11 deleted", Toast.LENGTH_SHORT).show();
                 }
 
-
-
             } // onClick()
+
         }); // save_pic_button.setOnClickListener()
 
 
         // TODO: add Google Ads
-
 
 
         return rootView;

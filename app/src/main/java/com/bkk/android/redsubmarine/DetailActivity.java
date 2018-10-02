@@ -11,6 +11,9 @@ import android.view.MenuItem;
 
 import com.bkk.android.redsubmarine.model.RedditPost;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 // This class is for showing 1 Reddit post
 public class DetailActivity extends AppCompatActivity {
 
@@ -20,21 +23,25 @@ public class DetailActivity extends AppCompatActivity {
     // class variables
     String id;
     Bundle bundle1;
-    Toolbar toolbar2;
+
+    @BindView(R.id.toolbar2) Toolbar toolbar2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        // Set up ButterKnife
+        ButterKnife.bind(this);
+
         Bundle bundle1 = getIntent().getExtras();
         RedditPost redditPost1 = bundle1.getParcelable("redditPost1");
         Log.d(LOG_TAG, redditPost1.getTitle() );
 
 //        toolbar2 = findViewById(R.id.toolbar2); // looking for toolbar2
-//        setSupportActionBar(toolbar2); // set up the top Action Bar
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setTitle( redditPost1.getTitle() );
+        setSupportActionBar(toolbar2); // set up the top Action Bar, i can see 'RedSubmarine' title
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle( redditPost1.getTitle() );
 
         // ain't no "State data" saved
 //        if (savedInstanceState == null) {

@@ -25,11 +25,11 @@ public class RedditPostEntry {
     private int numberOfComments;
     private long postedDate;
     private Boolean over18;
-    private Boolean isFavorited;
+    private int isFavorited; // yes is 1, no is 0
 
 
     // Constructor
-    public RedditPostEntry(String title, String thumbnail, String url, String subreddit, String author, String permalink, String post_id, String subreddit_name_prefixed, int score, int numberOfComments, long postedDate, Boolean over18, Boolean isFavorited) {
+    public RedditPostEntry(String title, String thumbnail, String url, String subreddit, String author, String permalink, String post_id, String subreddit_name_prefixed, int score, int numberOfComments, long postedDate, Boolean over18, int isFavorited) {
         this.title = title;
         this.thumbnail = thumbnail;
         this.url = url;
@@ -151,13 +151,12 @@ public class RedditPostEntry {
         this.over18 = over18;
     }
 
-    public Boolean getIsFavorited() {
+    public int getIsFavorited() {
         return isFavorited;
     }
 
-    public void setIsFavorited(Boolean favorited) {
-        isFavorited = favorited;
+    public void setIsFavorited(int isFavorited) {
+        this.isFavorited = isFavorited;
     }
-
 
 } // class RedditPostEntry
