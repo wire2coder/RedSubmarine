@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_item_list_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/cardview_dark_background"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
+
+            <!-- this is the post's title -->
+            <TextView
+                android:id="@+id/widget_post_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                tools:text="Title" />
+
+            <!-- this is the post's sub-title -->
+            <TextView
+                android:id="@+id/widget_post_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                tools:text="Subtitle Title" />
+        </LinearLayout>
+
+        <!-- outter wrapper -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- top group for votes-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_thermo_white_24dp"
+                    android:paddingRight="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/widget_post_vote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="777"
+                    />
+            </LinearLayout>
+
+            <!-- bottom group for comments -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_comment_white_24dp"
+                    />
+
+                <TextView
+                    android:id="@+id/widget_post_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="333"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</FrameLayout>

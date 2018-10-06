@@ -15,4 +15,12 @@
     <string name="three_dot_menu_open_in">open with</string>
     <string name="three_dot_menu_share_with">share with</string>
 
+    <!-- Widget Strings -->
+    <string name="widget_title">Saved Post</string>
+    <string name="widget_nothing_to_see">No Posts Saved</string>
+
+    <!-- TODO: rename this string -->
+    <string translatable="false" name="data_update_key">com.bkk.android.redsubmarine.ACTION_DATA_UPDATED</string>
+
+
 </resources>

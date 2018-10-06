@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- this file is the layout file for your widget -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    >
+
+    <FrameLayout
+        android:id="@+id/widget"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="@color/colorPrimary"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:text="@string/widget_title"
+            />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimaryDark"
+        >
+
+        <!-- this ListView is linked to other XML layout file -->
+        <!--TODO: 10/6 we are getting an error here why??? -->
+        <!--android:listitem="@layout/widget_item_list_view"-->
+        <ListView
+            android:id="@+id/widget_item_list_view1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/divider"
+            android:dividerHeight="1px"
+            />
+
+
+        <!-- this TextView is show when there's nothing to show in the widget -->
+        <TextView
+            android:id="@+id/widget_nothing_to_see"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/widget_nothing_to_see"
+            android:textSize="24sp"
+            />
+
+    </FrameLayout>
+
+</LinearLayout>

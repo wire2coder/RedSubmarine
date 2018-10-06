@@ -1,6 +1,7 @@
 package com.bkk.android.redsubmarine;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.ColorSpace;
 import android.net.Uri;
@@ -306,6 +307,14 @@ public class DetailFragment extends Fragment {
                 }
 
             } // onClick()
+
+
+            // TODO: 10/6 put Widget code here
+            Context context = getContext();
+            Intent dataUpdatedIntent = new Intent( getString(R.string.data_update_key) )
+                    .setPackage( context.getPackageName() );
+
+            // TODO: 10/6 put a line of code here to sendBroadcast(dataUpdatedIntent)
 
         }); // save_pic_button.setOnClickListener()
 

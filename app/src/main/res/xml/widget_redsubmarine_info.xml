@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialKeyguardLayout="@layout/widget_favorited_reddit_post"
+    android:initialLayout="@layout/widget_favorited_reddit_post"
+    android:minHeight="110dp"
+    android:minWidth="180dp"
+    android:previewImage="@drawable/ic_thermo_white_24dp"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="86400000"
+    android:widgetCategory="home_screen"
+    />
+
+    <!-- android:updatePeriodMillis="86400000" // (1000*60*60*24) -->
