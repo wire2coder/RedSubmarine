@@ -37,7 +37,7 @@
         >
 
         <!-- this ListView is linked to other XML layout file -->
-        <!--TODO: 10/6 we are getting an error here why??? -->
+        <!--TODO: 10/6 we are getting an error here why???, don't need to include the line below, and I don't know why -->
         <!--android:listitem="@layout/widget_item_list_view"-->
         <ListView
             android:id="@+id/widget_item_list_view1"

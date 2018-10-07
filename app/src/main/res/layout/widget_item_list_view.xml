@@ -33,11 +33,11 @@
 
             <!-- this is the post's sub-title -->
             <TextView
-                android:id="@+id/widget_post_subtitle"
+                android:id="@+id/widget_sub_reddit_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                tools:text="Subtitle Title" />
+                tools:text="Sub Reddit Name" />
         </LinearLayout>
 
         <!-- outter wrapper -->
@@ -80,8 +80,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_comment_white_24dp"
-                    />
+                    android:src="@drawable/ic_comment_white_24dp" />
 
                 <TextView
                     android:id="@+id/widget_post_comments"
