@@ -26,19 +26,25 @@
 
         <!-- TODO: 10/6 need <provider /> ?? -->
 
-        <!--<receiver android:name=".widget.RedsubmarineWidget" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-                <!--<action android:name="com.bkk.android.redsubmarine.ACTION_DATA_UPDATED" />-->
-            <!--</intent-filter>-->
+        <receiver android:name=".widget.RedsubmarineWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.bkk.android.redsubmarine.ACTION_DATA_UPDATED" />
+            </intent-filter>
 
-            <!--<meta-data-->
-                <!--android:name="android.appwidget.provider"-->
-                <!--android:resource="@xml/widget_redsubmarine_info"-->
-                <!--/>-->
-        <!--</receiver>-->
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_redsubmarine_info"
+                />
+        </receiver>
 
         <!-- TODO: 10/6 need <service /> ?? -->
+        <service
+            android:name=".widget.RedWidgetRemoteViewServices"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
 
     </application>
 </manifest>
