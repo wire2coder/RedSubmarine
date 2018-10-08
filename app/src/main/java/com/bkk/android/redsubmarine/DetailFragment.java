@@ -62,8 +62,7 @@ import butterknife.Unbinder;
 public class DetailFragment extends Fragment {
 
     // class variables
-    private static final String CLASS_TAG = DetailFragment.class.getSimpleName();
-    private static final String LOG_TAG = "ttt>>>: ";
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     Boolean isFaved;
 
@@ -78,9 +77,7 @@ public class DetailFragment extends Fragment {
     // do not use the same "BindView name" and the name of the "UI variable", you will NULL POINTER EXCEPTION
     private Unbinder unBinder;
     @BindView(R.id.fragment_share_button) ImageView share_pic_button;
-//    @BindView(R.id.fragment_save_button) ImageView save_pic_button;
     @BindView(R.id.fragment_save_button) CheckBox save_pic_button;
-
     @BindView(R.id.fragment_header_image) ImageView imageView1;
     @BindView(R.id.fragment_votes) TextView tv_votes;
     @BindView(R.id.fragment_comments_count) TextView tv_comments_count;
@@ -139,20 +136,15 @@ public class DetailFragment extends Fragment {
         // $.getJSON("http://www.reddit.com/r/" + sub + "/comments/" + id + ".json?", function (data)
         // https://www.reddit.com//r/funny/comments/9hwreb/a_shark_hanging_upside_down_looks_like_someone/.json
 
-            // volleyRequest(); << this doesn't work
-            // using regular AsyncTask instead
 
-
+        // using regular AsyncTask instead, volleyRequest(); << this doesn't work
         class GetRedditComments extends AsyncTask<String, Void, String> {
 
             @Override
             protected String doInBackground(String... inputs) {
 
-                // mComments.addAll( processor.fetchComments() );
-                // processor = new CommentProcessor(url)
-
                 String inputUrl = inputs[0];
-                Log.i("doInBackground", inputUrl);
+                Log.i(LOG_TAG, "doInBackground " + inputUrl);
 
                 // Get the contents of the Reddit Post
                 String dataStream = getComments1(inputUrl);
@@ -168,7 +160,6 @@ public class DetailFragment extends Fragment {
 
                     // Reddit comments with no reply, reply level zero
                     process1(mComments, jsonArray, 0);
-//                    Log.i("ggg"," Comments AL: " + String.valueOf(mComments.size()) );
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -182,10 +173,6 @@ public class DetailFragment extends Fragment {
 
             @Override
             protected void onPostExecute(String result) {
-
-//                Log.i("ggg"," Comments AL: " + String.valueOf(mComments.size()) );
-//                Log.i("ggg"," Comments AL: " + mComments );
-                Log.i("ggg>>>", result);
 
                 recyclerView1 = rootView.findViewById(R.id.rv_post_comments);
 
@@ -207,10 +194,12 @@ public class DetailFragment extends Fragment {
 
             GetRedditComments getRedditComments = new GetRedditComments();
 
-            Log.i("commentUrl>>>", commentUrl);
+            Log.i(LOG_TAG, "commentUrl>>>" + commentUrl);
             getRedditComments.execute(commentUrl);
 
         } else {
+
+            // TODO: get data out of Share Preferences
             // get data out of ParcelableArrrayList
 
             // make a new Adapter
@@ -226,11 +215,13 @@ public class DetailFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
+
                 // go make a XML layout file in /menu
                 PopupMenu popupMenu1 = new PopupMenu(getContext(), share_pic_button);
                 popupMenu1.getMenuInflater().inflate(R.menu.share_menu_button_layout, popupMenu1.getMenu());
 
                 popupMenu1.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
 
@@ -262,6 +253,7 @@ public class DetailFragment extends Fragment {
                         return true; // CONSUME THE "CLICK EVENT"
 
                     } // onMenuItemClick()
+
                 }); // popupMenu1.setOnMenuItemClickListener()
 
                 // show the three_dot_menu
@@ -273,6 +265,7 @@ public class DetailFragment extends Fragment {
 
 
         save_pic_button.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
 
@@ -304,17 +297,16 @@ public class DetailFragment extends Fragment {
                     mDb.redditPostDao().deleteRedditPost(redditPostEntry11);
 
                     Toast.makeText(getContext(), "redditPostEntry11 deleted", Toast.LENGTH_SHORT).show();
-                }
+                } // else
+
+
+                // Code for updating the Widget when you remove or add stuff form the Database
+                Intent dataUpdatedIntent = new Intent(getString(R.string.data_update_key))
+                        .setPackage(getContext().getPackageName());
+
+                getContext().sendBroadcast(dataUpdatedIntent);
 
             } // onClick()
-
-
-            // TODO: 10/6 put Widget code here
-            Context context = getContext();
-            Intent dataUpdatedIntent = new Intent( getString(R.string.data_update_key) )
-                    .setPackage( context.getPackageName() );
-
-            // TODO: 10/6 put a line of code here to sendBroadcast(dataUpdatedIntent)
 
         }); // save_pic_button.setOnClickListener()
 
@@ -326,6 +318,7 @@ public class DetailFragment extends Fragment {
     } // onCreateView()
 
 
+    // TODO: rename this
     // helper
     private void process1( ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_level ) throws Exception {
 
@@ -358,14 +351,10 @@ public class DetailFragment extends Fragment {
 
             redditComments1.setLevel(comment_level);
 
-
             if ( redditComments1.getAuthor() != null ) {
-                // Log.i("ttt>>>", redditComments1.getAuthor());
                 redditComments_al.add(redditComments1);
-
                 addCommentReplies(redditComments_al, data1, comment_level + 1);
-//                Log.i("ttt>>>", String.valueOf(redditComments_al.size())  );
-            }
+            } // if
 
         } // inside for loop
 
@@ -395,27 +384,13 @@ public class DetailFragment extends Fragment {
 
 
     // helper
-    public static HttpURLConnection createConnection(String url){
-        try {
-            HttpURLConnection httpURLConnection = (HttpURLConnection)new URL(url).openConnection();
-            httpURLConnection.setReadTimeout(30000);
-            httpURLConnection.setRequestProperty("User-Agent", "Firefox 50");
-            return httpURLConnection;
-        } catch(Exception e) {
-            Log.d("CONNECTION FAILED", e.toString());
-            return null;
-        }
-    } // createConnection()
-
-
-    // helper
     public static String getComments1(String url) {
+
+        String empty = "";
+
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
-
             StringBuffer stringBuffer = new StringBuffer();
-            String empty = "";
-
             BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(httpURLConnection.getInputStream() ) );
 
             while ( (empty = bufferedReader.readLine()) != null) {
@@ -426,9 +401,10 @@ public class DetailFragment extends Fragment {
             return stringBuffer.toString();
 
         } catch(Exception e) {
-            Log.d(CLASS_TAG, "error: parseStream()");
+            Log.d(LOG_TAG, "error: parseStream()");
             return null;
         }
+
     } // getComments1()
 
 

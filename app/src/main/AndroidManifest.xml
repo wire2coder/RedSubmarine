@@ -14,7 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop"
+            >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,13 +41,25 @@
                 />
         </receiver>
 
-        <!-- TODO: 10/6 need <service /> ?? -->
+        <!-- This makes the info show inside the Widget -->
         <service
             android:name=".widget.RedWidgetRemoteViewServices"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
+
+        <!--completed: add another Service here for job dispatcher-->
+        <!--The purpose of the "exported" is to let other apps have access to a service.-->
+        <service
+            android:name=".firebase.MyJobService"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+
 
     </application>
 </manifest>

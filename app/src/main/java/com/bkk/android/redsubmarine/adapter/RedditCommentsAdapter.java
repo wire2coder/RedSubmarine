@@ -20,8 +20,7 @@ import java.util.ArrayList;
 public class RedditCommentsAdapter extends RecyclerView.Adapter<RedditCommentsAdapter.AsdfViewHolder> {
 
     // class variables
-    private static final String CLASS_TAG = RedditCommentsAdapter.class.getSimpleName();
-    private static final String LOG_TAG = "ttt>>>: ";
+    private static final String LOG_TAG = RedditCommentsAdapter.class.getSimpleName();
 
     private ArrayList<RedditComments> mRedditComments;
     private Context mContext;
@@ -32,27 +31,11 @@ public class RedditCommentsAdapter extends RecyclerView.Adapter<RedditCommentsAd
         this.mRedditComments = mRedditComments;
     }
 
-    public void clearData() {
-
-        mRedditComments.clear();
-        notifyDataSetChanged();
-
-    } // clearData
-
 
     @Override
     public AsdfViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         Context context1 = viewGroup.getContext();
-
-        // why does these code below only show 1 comment?
-//        int layout1 = R.layout.item_redditcomments_adapter;
-//        LayoutInflater inflater = LayoutInflater.from(context);
-//        boolean shouldAttachToParentImmediately = false;
-//
-//        View view = inflater.inflate(layout1, viewGroup, shouldAttachToParentImmediately);
-//        AsdfViewHolder asdfViewHolder = new AsdfViewHolder(view);
-//        return  asdfViewHolder;
 
         View view = LayoutInflater
                 .from(context1)
@@ -81,39 +64,24 @@ public class RedditCommentsAdapter extends RecyclerView.Adapter<RedditCommentsAd
 
         // adding color to differentiate each "comment reply"
 
-        switch ( redditComments1.getLevel() ) {
-
-            case 0:
-                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF530D"));
-                break;
-
-            case 1:
-                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#E82C0C"));
-                break;
-
-            case 2:
-                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF0000"));
-                break;
-
-            case 3:
-                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#E80C7A"));
-                break;
-
-            case 4:
-                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF0DFF"));
-                break;
-
-//            case 5:
-//                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF680E"));
+        // TODO: 10/8 remove the this switch statement
+//        switch ( redditComments1.getLevel() ) {
+//
+//            case 0:
+//                asdfViewHolder.commentText.setBackgroundColor(Color.parseColor("#E8920C"));
 //                break;
 //
-//            case 6:
-//                asdfViewHolder.commentLevel2.setBackgroundColor(Color.parseColor("#FF7A0C"));
+//            case 1:
+//                asdfViewHolder.commentText.setBackgroundColor(Color.parseColor("#DEFF00"));
 //                break;
-
-                // do not include "default case"
-
-        } // switch
+//
+//            case 2:
+//                asdfViewHolder.commentText.setBackgroundColor(Color.parseColor("#FF0000"));
+//                break;
+//
+//                // do not include "default case"
+//
+//        } // switch
 
     } // onBindViewHolder()
 

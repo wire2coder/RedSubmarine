@@ -1,5 +1,6 @@
 package com.bkk.android.redsubmarine;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -32,9 +33,13 @@ import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
 import com.bkk.android.redsubmarine.database.AppDatabase;
 import com.bkk.android.redsubmarine.database.RedditPostEntry;
+import com.bkk.android.redsubmarine.firebase.MyJobService;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,11 +54,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String CLASS_TAG = MainActivity.class.getSimpleName();
-    private static final String LOG_TAG = "ttt>>>: ";
+    // class variables
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    Context context1;
 
-    private static final String BASE_URL = "https://www.reddit.com/r/";
-    private static String REDDIT_URL_NEW = "https://www.reddit.com/r/subreddit/new.json?sort=new";
+//    private static final String BASE_URL = "https://www.reddit.com/r/";
+//    private static String REDDIT_URL_NEW = "https://www.reddit.com/r/subreddit/new.json?sort=new";
     private static String REDDIT_URL2 = "https://www.reddit.com/.json";
     private String subRedditName = "";
 
@@ -81,12 +87,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        context1 = getApplicationContext();
+
         // Stetho setup, for DEBUGGING
         Stetho.initializeWithDefaults(this);
 
         // Set up ButterKnife
         ButterKnife.bind(this);
 
+        // Top navigation toolbar
         makeAToolBar();
 
         // getting "SharedPreferences"
@@ -106,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i("groupID", String.valueOf(groupID)); << might not need this
 //        mDrawerMenu.removeGroup(500); // << why is it 500? << might not need this
 
+        // TODO: 10/8 i don't know what this does
         mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
         mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
         // DONE: 9/27, show a list of sub-reddits in the Navigation Drawer
@@ -113,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: 9/28, put the Strings into "SharePreferrences"
         String string1 = "home,all,announcements,Art,AskReddit,askscience,aww,blog,books,creepy,dataisbeautiful,DIY,Documentaries,EarthPorn,explainlikeimfive,Fitness,food,funny,Futurology,gadgets,gaming,GetMotivated,gifs,history,IAmA,InternetIsBeautiful,Jokes,LifeProTips,listentothis,mildlyinteresting,movies,Music,news,nosleep,nottheonion,OldSchoolCool,personalfinance,philosophy,photoshopbattles,pics,science,Showerthoughts,space,sports,television,tifu,todayilearned,TwoXChromosomes,UpliftingNews,videos,worldnews,WritingPrompts";
         List<String> subRedditList1 = Arrays.asList(string1.split(","));
-        Log.i("subRedditList1", subRedditList1.toString());
+        Log.i(LOG_TAG, "subRedditList1 " + subRedditList1.toString());
 
         for (int x = 0; x < subRedditList1.size(); x++) {
             MenuItem subRedditMenuItem = mDrawerMenu.add(subRedditList1.get(x));
@@ -143,12 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
                             // "initLoader"
                             ArrayList<RedditPostEntry> asdf1 =  (ArrayList) mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
-//                            Log.i("asdf1.size()", String.valueOf( asdf1.size() )  );
 
                             // need a for loop to loop through ArrayList
                             for (int x=0; x < asdf1.size(); x++) {
                                 asdf1.get(x).getId();
-                                Log.i("asdf1.getId(): ", String.valueOf(asdf1.get(x).getId()));
+                                Log.i(LOG_TAG, "asdf1.getId() " + String.valueOf(asdf1.get(x).getId()));
 
                                 RedditPost redditPost = new RedditPost(
                                         asdf1.get(x).getTitle(),
@@ -182,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
 
                             String subRedditName = menuItem1.toString();
-                            Log.i("subRedditName", subRedditName);
+                            Log.i(LOG_TAG,"subRedditName" + subRedditName);
                             updateMainActivity( subRedditName );
 
                         } // else
@@ -201,11 +210,12 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // making network request to Reddit
-//        volleyRequest(REDDIT_URL2);
-
         // Program starting point!
+        // making network request to Reddit
         updateMainActivity("home");
+
+        // TODO: 10/8 need to modify this
+        makeFirebaseJobDispatcher();
 
     } // onCreate
 
@@ -223,12 +233,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     // helper
-    // ~ updateList()
     public void updateMainActivity(String subRedditName1) {
 
         this.subRedditName = subRedditName1;
         toolbar.setTitle(subRedditName1);
 
+        // TODO: 10/8 maybe do something here
         // clearing the search bar
 //        if ( mSearchView != null) {
 //            mSearchView.setQuery("", false);
@@ -236,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         if ( subRedditName.equals("home") ) {
-            Log.i("subRedditName", "subRedditName == home");
+            Log.i(LOG_TAG, "subRedditName" + "subRedditName == home");
             volleyRequest(REDDIT_URL2); // << Reddit homepage with JSON response
         } else {
             volleyRequest("https://www.reddit.com/r/" + subRedditName + "/.json");
@@ -365,6 +375,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     } // onCreateOptionsMenu()
 
+
+    // helper
     public void searchForRedditPost(String currentSubRedditItem, String searchQuery) {
 
         subRedditName = currentSubRedditItem;
@@ -373,26 +385,49 @@ public class MainActivity extends AppCompatActivity {
         String searchUrl;
         String redditJson = "https://www.reddit.com/";
         String searchString1 = "search.json?q=" + searchQuery;
-        Log.i("searchForRedditPost()", subRedditName);
+        Log.i(LOG_TAG,"searchForRedditPost() " + subRedditName);
 
 
         if (currentSubRedditItem.equals("home") ) {
             searchUrl = redditJson + searchString1;
-            Log.i("if1", subRedditName);
+            Log.i(LOG_TAG,"if1 "+ subRedditName);
 
-            // TODO: turn off "reddit post sorting" here
+            // TODO: 10/8 turn off "reddit post sorting" here, for "Favorites, Home"
 
         } else {
             // https://www.reddit.com/r/ + subRedditName + /search.json?q + searchQuery
             searchUrl = redditJson + "r/" + subRedditName + "/search.json?q=" + searchQuery;
-            Log.i("if1", subRedditName);
+            Log.i(LOG_TAG,"else1 "+ subRedditName);
         } // else
 
 
-        Log.i("if1", searchUrl);
+        Log.i(LOG_TAG,"if1 " + searchUrl);
         volleyRequest(searchUrl);
 
     } // searchForRedditPost()
+
+
+    // helper
+    public void makeFirebaseJobDispatcher() {
+        // TODO: 10/8 put a Jobdispatcher here maybe?
+        // https://github.com/firebase/firebase-jobdispatcher-android
+        // Creating a new dispatcher using the Google Play driver.
+
+        if(context1 != null) {
+            FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context1));
+
+            Job myJob = dispatcher.newJobBuilder()
+                    .setService(MyJobService.class) // the JobService that will be called
+                    .setTag("jobID1")
+                    .build();
+
+            dispatcher.mustSchedule(myJob);
+        } else {
+            Log.e(LOG_TAG, "makeFirebaseJobDispatcher() error" );
+        }
+
+    } // makeFirebaseJobDispatcher()
+
 
 
     public MainActivityAdapter.OnItemClickListener redditPostClick1 = new MainActivityAdapter.OnItemClickListener() {
@@ -401,26 +436,12 @@ public class MainActivity extends AppCompatActivity {
         public void onItemClick(View view, int position) {
             RedditPost redditPost1 = mAdapter.getRedditPosts().get(position);
 
-//            intentDetailActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // TODO: I don't know the purpose of this line
-
             Bundle bundle1 = new Bundle();
             bundle1.putParcelable("redditPost1", redditPost1); // << using Parcelable
 
             final Intent intent1 = new Intent(getBaseContext(), DetailActivity.class);
             intent1.putExtras(bundle1);
             startActivity(intent1); // Start DetailActivity.java
-
-//            bundle1.putString("title", redditPost1.getThumbnail());
-//            bundle1.putString("thumbnail", redditPost1.getThumbnail());
-//            bundle1.putString("url", redditPost1.getUrl());
-//            bundle1.putString("subreddit", redditPost1.getSubreddit());
-//            bundle1.putString("author", redditPost1.getAuthor());
-//            bundle1.putString("permalink", redditPost1.getPermalink());
-//            bundle1.putString("id", redditPost1.getId());
-//            bundle1.putString("subreddit_name_prefixed", redditPost1.getSubreddit_name_prefixed());
-//            bundle1.putInt("score", redditPost1.getScore());
-//            bundle1.putInt("num_comments", redditPost1.getNumberOfComments());
-//            bundle1.putBoolean("over_18", redditPost1.getOver18() );
 
         } // onItemClick()
     };

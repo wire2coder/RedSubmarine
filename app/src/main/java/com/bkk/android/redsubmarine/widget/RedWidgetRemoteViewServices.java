@@ -2,6 +2,7 @@ package com.bkk.android.redsubmarine.widget;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
@@ -39,12 +40,7 @@ public class RedWidgetRemoteViewServices extends RemoteViewsService {
             public void onDataSetChanged() {
                 Log.d(LOG_TAG,"onDataSetChanged() ");
 
-            // App database getAll()
-
-//            if (mDb != null) {
-//                mDb.close();
-//            }
-
+                // Android Room
                 mDb = AppDatabase.getsInstance( getBaseContext().getApplicationContext() );
                 asdf1 = mDb.redditPostDao().loadAllSavedRedditPost();
 
@@ -54,7 +50,7 @@ public class RedWidgetRemoteViewServices extends RemoteViewsService {
             @Override
             public int getCount() {
                 Log.d(LOG_TAG,"getCount() " + asdf1.size() );
-                return   (asdf1 == null) ? 0 : asdf1.size() ;
+                return (asdf1 == null) ? 0 : asdf1.size() ;
             } // getCount()
 
 
@@ -71,19 +67,39 @@ public class RedWidgetRemoteViewServices extends RemoteViewsService {
                 int num_of_votes = asdf1.get(position).getScore();
                 int num_of_comments = asdf1.get(position).getNumberOfComments();
 
-                //                Log.d(LOG_TAG, "title > " + title );
-                //                Log.d(LOG_TAG, "subtitle > " + subtitle );
 
                 // making "one view" for the Widget
                 RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.widget_item_list_view);
 
                 remoteViews.setTextViewText(R.id.widget_post_title, post_title);
-                remoteViews.setTextViewText(R.id.widget_sub_reddit_name, post_sub_reddit_name);
+                remoteViews.setTextViewText(R.id.widget_sub_reddit_name, "/r/" + post_sub_reddit_name);
                 remoteViews.setTextViewText(R.id.widget_post_vote, String.valueOf(num_of_votes) );
                 remoteViews.setTextViewText(R.id.widget_post_comments, String.valueOf(num_of_comments) );
 
 
-                // TODO: 10/7 why does stuff not showing in the Widget?
+                RedditPost redditPost1 = new RedditPost(
+                        asdf1.get(position).getTitle(),
+                        asdf1.get(position).getThumbnail(),
+                        asdf1.get(position).getUrl(),
+                        asdf1.get(position).getSubreddit(),
+                        asdf1.get(position).getAuthor(),
+                        asdf1.get(position).getPermalink(),
+                        asdf1.get(position).getPost_id(),
+                        asdf1.get(position).getSubreddit_name_prefixed(),
+                        asdf1.get(position).getScore(),
+                        asdf1.get(position).getNumberOfComments(),
+                        asdf1.get(position).getPostedDate(),
+                        asdf1.get(position).getOver18()
+                );
+
+                Intent intentingToOpenDetailActivity = new Intent();
+                Bundle bundle1 = new Bundle();
+                bundle1.putParcelable("redditPost1", redditPost1);
+
+                intentingToOpenDetailActivity.putExtras(bundle1);
+
+                remoteViews.setOnClickFillInIntent(R.id.widget_item_list_view, intentingToOpenDetailActivity);
+
                 return remoteViews; // RemoteViews, need to return "RemoteViews" thing
             } // getViewAt()
 
@@ -109,11 +125,10 @@ public class RedWidgetRemoteViewServices extends RemoteViewsService {
                 return 1;
             }
 
-//            TODO: 10/7 here, look below this line.
-
             @Override
             public long getItemId(int position) {
-                return 0;
+                Log.i(LOG_TAG, "getItemId() " + String.valueOf(position));
+                return position;
             }
 
 
@@ -121,7 +136,6 @@ public class RedWidgetRemoteViewServices extends RemoteViewsService {
             public boolean hasStableIds() {
                 return false;
             }
-
 
         }; // return
 

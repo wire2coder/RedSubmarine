@@ -17,10 +17,9 @@ import butterknife.ButterKnife;
 // This class is for showing 1 Reddit post
 public class DetailActivity extends AppCompatActivity {
 
-    private static final String CLASS_TAG = DetailActivity.class.getSimpleName();
-    private static final String LOG_TAG = "ttt>>>: ";
-
     // class variables
+    private static final String LOG_TAG = DetailActivity.class.getSimpleName();
+
     String id;
     Bundle bundle1;
 
@@ -66,7 +65,6 @@ public class DetailActivity extends AppCompatActivity {
     } // onCreate()
 
 
-    //
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

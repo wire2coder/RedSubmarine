@@ -43,6 +43,7 @@
             <include layout="@layout/recyclerview_reddit_posts" />
 
         </FrameLayout>
+        <!--TODO: 10/8 need to add top padding-->
 
 
     </android.support.design.widget.CoordinatorLayout>
@@ -58,7 +59,6 @@
         android:fitsSystemWindows="true"
 
         app:menu="@menu/drawer_view"
-
         app:headerLayout="@layout/nav_header"
         />
 

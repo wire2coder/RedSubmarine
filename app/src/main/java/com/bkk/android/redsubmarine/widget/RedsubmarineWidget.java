@@ -77,13 +77,11 @@ public class RedsubmarineWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // for when the first widget is created
-        Log.d(LOG_TAG,"onEnabled()");
     } // onEnabled()
 
     @Override
     public void onDisabled(Context context) {
         // when the last widget is disabled
-        Log.d(LOG_TAG,"onDisabled()");
     } // onDisabled()
 
 
