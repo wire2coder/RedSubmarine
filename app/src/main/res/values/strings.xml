@@ -19,8 +19,14 @@
     <string name="widget_title">Saved Post</string>
     <string name="widget_nothing_to_see">No Posts Saved</string>
 
+    <!-- General Strings -->
+    <string translatable="true" name="hot_reddit_post">hot</string>
+    <string translatable="true" name="new_reddit_post">new</string>
+
     <!-- TODO: rename this string -->
     <string translatable="false" name="data_update_key">com.bkk.android.redsubmarine.ACTION_DATA_UPDATED</string>
+    <string translatable="true" name="drawer_open">drawer_open</string>
+    <string translatable="true" name="drawer_close">drawer_close</string>
 
 
 </resources>

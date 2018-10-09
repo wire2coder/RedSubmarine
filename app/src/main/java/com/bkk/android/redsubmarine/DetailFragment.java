@@ -105,11 +105,15 @@ public class DetailFragment extends Fragment {
 //        Log.d( LOG_TAG, redditPost1.getThumbnail() );
 //        Log.d( LOG_TAG, "www.reddit.com" + redditPost1.getPermalink() + ".json" );
 
+        try {
+                // use Picasso to get the "header image"
+                Picasso.get()
+                        .load(redditPost1.getThumbnail())
+                        .into(imageView1);
+        } catch (IllegalArgumentException e) {
+            imageView1.setImageResource(R.drawable.ic_comment_black_24dp);
+        }
 
-        // use Picasso to get the "header image"
-        Picasso.get()
-                .load(redditPost1.getThumbnail())
-                .into(imageView1);
 
         tv_votes.setText( String.valueOf(redditPost1.getScore()) );
         tv_comments_count.setText( String.valueOf(redditPost1.getNumberOfComments()) );
@@ -318,19 +322,21 @@ public class DetailFragment extends Fragment {
     } // onCreateView()
 
 
-    // TODO: rename this
+    // TODO: rename this, what does this do again? parsing comments from JSON
     // helper
     private void process1( ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_level ) throws Exception {
 
         for (int x=0; x < jsonArray.length(); x++) {
 
-            if (jsonArray.getJSONObject(x).optString("kind") == null) {
-                continue;
-            }
+            // TODO: might not need this
+//            if (jsonArray.getJSONObject(x).optString("kind") == null) {
+//                continue;
+//            }
 
-            if (jsonArray.getJSONObject(x).optString("kind").equals("t1") == false) {
-                continue;
-            }
+            // TODO: might not need this
+//            if (jsonArray.getJSONObject(x).optString("kind").equals("t1") == false) {
+//                continue;
+//            }
 
             JSONObject data1 = jsonArray.getJSONObject(x).getJSONObject("data");
 

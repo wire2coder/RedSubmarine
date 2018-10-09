@@ -82,10 +82,15 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
 
         holder.tv_post_title.setText(redditPost.getTitle());
 
-        // use Picasso here instead of Volley ImageLoader
+        try {
+            // use Picasso here instead of Volley ImageLoader
             Picasso.get()
-                    .load(redditPost.getThumbnail())
-                    .into(holder.iv_thumbnail);
+                .load(redditPost.getThumbnail())
+                .into(holder.iv_thumbnail);
+        } catch (IllegalArgumentException e) {
+            holder.iv_thumbnail.setImageResource(R.drawable.ic_comment_black_24dp);
+        }
+
 
         holder.tv_vote_counter.setText( String.valueOf(redditPost.getScore()) );
         holder.tv_comments_counter.setText( String.valueOf(redditPost.getNumberOfComments()));

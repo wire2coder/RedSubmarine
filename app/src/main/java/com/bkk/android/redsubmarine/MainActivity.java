@@ -5,10 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +16,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +56,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     Context context1;
 
-//    private static final String BASE_URL = "https://www.reddit.com/r/";
-//    private static String REDDIT_URL_NEW = "https://www.reddit.com/r/subreddit/new.json?sort=new";
-    private static String REDDIT_URL2 = "https://www.reddit.com/.json";
+    // "https://www.reddit.com/r/";
+    // "https://www.reddit.com/r/subreddit/new.json?sort=new";
     private String subRedditName = "";
+    private String sortRedditBy = "";
 
     private List<RedditPost> redditPosts = new ArrayList<>();
 
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public SharedPreferences mSharedPreferences1;
     private AppDatabase mAppDatabase1;
 
+    private ActionBarDrawerToggle drawerToggle1;
     private DrawerLayout mDrawerLayout;
     private Toolbar toolbar;
         private Menu sortMenu;
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         private SearchView mSearchView;
 
         @BindView(R.id.drawer_view1) NavigationView drawer_view1;
-        private Menu subRedditMenu;
+//        private Menu subRedditMenu; don't need it
 
 
     @Override
@@ -105,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         mAppDatabase1 = AppDatabase.getsInstance( getApplicationContext() );
 
 
-
         // Navigation Drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
@@ -116,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
 //        mDrawerMenu.removeGroup(500); // << why is it 500? << might not need this
 
         // TODO: 10/8 i don't know what this does
-        mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
-        mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
+//        mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
+//        mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
         // DONE: 9/27, show a list of sub-reddits in the Navigation Drawer
 
         // TODO: 9/28, put the Strings into "SharePreferrences"
@@ -191,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
 
                             String subRedditName = menuItem1.toString();
-                            Log.i(LOG_TAG,"subRedditName" + subRedditName);
+                            Log.d(LOG_TAG,"subRedditName " + subRedditName);
                             updateMainActivity( subRedditName );
 
                         } // else
@@ -217,14 +215,32 @@ public class MainActivity extends AppCompatActivity {
         // TODO: 10/8 need to modify this
         makeFirebaseJobDispatcher();
 
+        // TODO: 10/9 hide the "Sort By" on the top right
+//        showSortBy(false);
+
+//        Log.d(LOG_TAG, String.valueOf(sortMenu.size()));
+
+        makeNavigationDrawerMove();
+
     } // onCreate
+
+
+    // helper
+    private void showSortBy(Boolean option1) {
+        if ( sortMenu == null) {
+            return;
+        }
+
+        Log.d(LOG_TAG, " showSortBy() ");
+
+    } // showSortBy()
 
 
     private void makeAToolBar() {
         // Set the toolbar as the action bar
         toolbar = findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("put anything here");
+        getSupportActionBar().setTitle(getTitle()); // >> name of the current sub-reddit
 
         // Enable the app bar's "home" button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // << this line shows an arrow pointing left
@@ -238,19 +254,46 @@ public class MainActivity extends AppCompatActivity {
         this.subRedditName = subRedditName1;
         toolbar.setTitle(subRedditName1);
 
-        // TODO: 10/8 maybe do something here
+        String url1;
+
+        // TODO: 10/9 "Sort By" urls
+        //    https://www.reddit.com/r/announcements/hot/.json
+        //    https://www.reddit.com/r/<subRedditName1>/new/.json
+
+        // TODO: 10/9 HIDE the SORT BY, maybe do something here for the "Sort By" optoin, top right
         // clearing the search bar
 //        if ( mSearchView != null) {
 //            mSearchView.setQuery("", false);
 //            mSearchView.setIconified(true); // << show the search icon
 //        }
 
+
+        // checking that sortRedditBy has been selected
+//            Log.i(LOG_TAG, "sortRedditBy " + sortRedditBy);
+
+
+
         if ( subRedditName.equals("home") ) {
-            Log.i(LOG_TAG, "subRedditName" + "subRedditName == home");
-            volleyRequest(REDDIT_URL2); // << Reddit homepage with JSON response
+
+            Log.i(LOG_TAG, "subRedditName " + "home");
+            // https://www.reddit.com/.json
+
+            url1 = Strings.REDDIT_URL + Strings.JSON_EXTENSION;
+
         } else {
-            volleyRequest("https://www.reddit.com/r/" + subRedditName + "/.json");
+
+            // https://www.reddit.com/r/Art/hot/.json
+            url1 =  Strings.REDDIT_URL
+                    + Strings.REDDIT_URL_R
+                    + subRedditName1
+                    + "/"
+                    + sortRedditBy
+                    + Strings.JSON_EXTENSION_URL;
+
         } // else
+
+        Log.i(LOG_TAG, "url1 " + url1);
+        volleyRequest(url1); // << Reddit homepage with JSON response
 
     } // updateMainActivity()
 
@@ -331,26 +374,15 @@ public class MainActivity extends AppCompatActivity {
     } // volleyRequest()
 
 
-    // Open the drawer when the button is tapped
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    } // onOptionsItemSelected()
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_and_sort_menu, menu); // << this is an XML file
+
+        getMenuInflater().inflate(R.menu.search_and_sort_menu, menu); // << this is an XML file
+        this.sortMenu = menu;
 
         // for the Search button in reddit_post_search_menuarch_menu.xml
+        // TODO 10/9: what does this do?
         MenuItem searchItem = menu.findItem(R.id.item_search_menu);
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.item_search_menu));
 
@@ -383,25 +415,33 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(subRedditName);
 
         String searchUrl;
-        String redditJson = "https://www.reddit.com/";
         String searchString1 = "search.json?q=" + searchQuery;
-        Log.i(LOG_TAG,"searchForRedditPost() " + subRedditName);
+//        Log.i(LOG_TAG,"searchForRedditPost() " + subRedditName);
 
-
+        // for "home" sub-reddit
         if (currentSubRedditItem.equals("home") ) {
-            searchUrl = redditJson + searchString1;
-            Log.i(LOG_TAG,"if1 "+ subRedditName);
+
+            searchUrl = Strings.REDDIT_URL + searchString1;
 
             // TODO: 10/8 turn off "reddit post sorting" here, for "Favorites, Home"
+//            hideSortMenu(true);
 
         } else {
+            // for "everything other sub-reddit" that is not "home
+
             // https://www.reddit.com/r/ + subRedditName + /search.json?q + searchQuery
-            searchUrl = redditJson + "r/" + subRedditName + "/search.json?q=" + searchQuery;
-            Log.i(LOG_TAG,"else1 "+ subRedditName);
+            searchUrl = Strings.REDDIT_URL
+                    + Strings.REDDIT_URL_R
+                    + subRedditName
+                    + "/" + Strings.SEARCH
+                    + Strings.JSON_EXTENSION
+                    + Strings.QUERY
+                    + searchQuery;
+
         } // else
 
 
-        Log.i(LOG_TAG,"if1 " + searchUrl);
+        Log.d(LOG_TAG,"searchUrl " + searchUrl);
         volleyRequest(searchUrl);
 
     } // searchForRedditPost()
@@ -464,6 +504,68 @@ public class MainActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         // [END crash_force_crash]
     }
+
+
+    // Open the drawer when the button is tapped
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // *** replaced with
+        // makeNavigationDrawerMove()
+
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                mDrawerLayout.openDrawer(GravityCompat.START);
+//                return true;
+//        } // switch
+
+        // *** replaced with
+        // makeNavigationDrawerMove()
+
+        switch (item.getItemId()) {
+
+            case R.id.item_sort_new:
+                sortRedditBy = getString(R.string.new_reddit_post);
+                break;
+
+            case R.id.item_sort_hot:
+                sortRedditBy = getString(R.string.hot_reddit_post);
+                break;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        Log.d(LOG_TAG, "subRedditName>>> " + subRedditName); // >> this works
+        updateMainActivity(subRedditName);
+
+        return true;
+    } // onOptionsItemSelected()
+
+
+    // helper
+    private void makeNavigationDrawerMove() {
+        drawerToggle1 = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar
+                , R.string.drawer_open, R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        // note setDrawerListener() is deprecated
+        mDrawerLayout.addDrawerListener(drawerToggle1);
+
+    } // makeNavigationDrawerMove()
+
+
+
 
 
 } // class MainActivity
