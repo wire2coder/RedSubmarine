@@ -21,8 +21,6 @@ public class DetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
 
     String id;
-    Bundle bundle1;
-
     @BindView(R.id.toolbar2) Toolbar toolbar2;
 
     @Override
@@ -34,7 +32,7 @@ public class DetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Bundle bundle1 = getIntent().getExtras();
-        RedditPost redditPost1 = bundle1.getParcelable("redditPost1");
+        RedditPost redditPost1 = bundle1.getParcelable(getString(R.string.redditPost1) );
         Log.d(LOG_TAG, redditPost1.getTitle() );
 
 //        toolbar2 = findViewById(R.id.toolbar2); // looking for toolbar2
@@ -51,7 +49,7 @@ public class DetailActivity extends AppCompatActivity {
 
         // make a new bundle
         Bundle bundle2 = new Bundle();
-        bundle2.putParcelable("redditPost1", redditPost1); // << using Parcelable
+        bundle2.putParcelable( getString(R.string.redditPost1) , redditPost1); // << using Parcelable
 
         // fragment setArgument
         detailFragment.setArguments(bundle2);

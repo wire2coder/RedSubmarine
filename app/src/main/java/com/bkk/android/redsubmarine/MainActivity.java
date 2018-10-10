@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,13 +30,17 @@ import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.MainActivityAdapter;
 import com.bkk.android.redsubmarine.database.AppDatabase;
 import com.bkk.android.redsubmarine.database.RedditPostEntry;
-import com.bkk.android.redsubmarine.firebase.MyJobService;
+import com.bkk.android.redsubmarine.firebase.ReminderService;
 import com.bkk.android.redsubmarine.model.RedditPost;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.Driver;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.Trigger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,9 +79,8 @@ public class MainActivity extends AppCompatActivity {
         private Menu sortMenu;
         private Menu mDrawerMenu;
         private SearchView mSearchView;
-
         @BindView(R.id.drawer_view1) NavigationView drawer_view1;
-//        private Menu subRedditMenu; don't need it
+
 
 
     @Override
@@ -109,23 +111,18 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerMenu = drawer_view1.getMenu();
 
-//        int groupID = mDrawerMenu.getItem(0).getGroupId(); << might not need this
-//        Log.i("groupID", String.valueOf(groupID)); << might not need this
-//        mDrawerMenu.removeGroup(500); // << why is it 500? << might not need this
-
-        // TODO: 10/8 i don't know what this does
+        // TODO: i don't know what this does
 //        mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
 //        mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
-        // DONE: 9/27, show a list of sub-reddits in the Navigation Drawer
 
         // TODO: 9/28, put the Strings into "SharePreferrences"
-        String string1 = "home,all,announcements,Art,AskReddit,askscience,aww,blog,books,creepy,dataisbeautiful,DIY,Documentaries,EarthPorn,explainlikeimfive,Fitness,food,funny,Futurology,gadgets,gaming,GetMotivated,gifs,history,IAmA,InternetIsBeautiful,Jokes,LifeProTips,listentothis,mildlyinteresting,movies,Music,news,nosleep,nottheonion,OldSchoolCool,personalfinance,philosophy,photoshopbattles,pics,science,Showerthoughts,space,sports,television,tifu,todayilearned,TwoXChromosomes,UpliftingNews,videos,worldnews,WritingPrompts";
+        String string1 = getString(R.string.all_sub_reddits);
         List<String> subRedditList1 = Arrays.asList(string1.split(","));
-        Log.i(LOG_TAG, "subRedditList1 " + subRedditList1.toString());
+        Log.d(LOG_TAG, "subRedditList1 " + subRedditList1.toString());
 
         for (int x = 0; x < subRedditList1.size(); x++) {
             MenuItem subRedditMenuItem = mDrawerMenu.add(subRedditList1.get(x));
-            subRedditMenuItem.setIcon(R.drawable.ic_reddit); // << used Reddit icon but it is brown.
+            subRedditMenuItem.setIcon(R.drawable.ic_reddit_logo); // << used Reddit icon but it is brown.
         } // for
 
         drawer_view1.setItemIconTintList(null); // << make the Reddit item visible
@@ -144,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
                             // clear the data in the ArrayList
                             redditPosts.clear();
-                            Log.i(LOG_TAG, "redditPosts.clear()");
+                            Log.d(LOG_TAG, "redditPosts.clear() ");
 
                             // get data from database
                             mAppDatabase1.redditPostDao().loadAllSavedRedditPost();
@@ -155,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                             // need a for loop to loop through ArrayList
                             for (int x=0; x < asdf1.size(); x++) {
                                 asdf1.get(x).getId();
-                                Log.i(LOG_TAG, "asdf1.getId() " + String.valueOf(asdf1.get(x).getId()));
+                                Log.d(LOG_TAG, "asdf1.getId() " + String.valueOf(asdf1.get(x).getId()));
 
                                 RedditPost redditPost = new RedditPost(
                                         asdf1.get(x).getTitle(),
@@ -180,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                             mAdapter.swapData(redditPosts);
 
                             // set the title of the "top bar"
-                            toolbar.setTitle("My Favorites Post");
+                            toolbar.setTitle( getString(R.string.favorited_posts) );
 
                             // set items as selected to persist high light
                             // menuItem.setCheckable(true);
@@ -208,24 +205,34 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Program starting point!
-        // making network request to Reddit
-        updateMainActivity("home");
 
         // TODO: 10/8 need to modify this
         makeFirebaseJobDispatcher();
 
-        // TODO: 10/9 hide the "Sort By" on the top right
-//        showSortBy(false);
+        FirebaseJobDispatcher dispatcher1 = new FirebaseJobDispatcher( new GooglePlayDriver(MainActivity.this) );
+        dispatcher1.mustSchedule(
+                dispatcher1.newJobBuilder()
+                .setService(ReminderService.class)
+                .setTag("TestingJob")
+                .setRecurring(true)
+                        // TODO: 10/10 job not executing every 5 seconds
+                .setTrigger(Trigger.executionWindow(5, 5)) // execution window of 5 to 30 seconds
+                .build()
+        );
 
-//        Log.d(LOG_TAG, String.valueOf(sortMenu.size()));
 
-        makeNavigationDrawerMove();
+
+        makeNavigationDrawerMove(); // << navigation menu on the RIGHT of the screen
+
+        // Program starting point!
+        // making network request to Reddit
+        updateMainActivity(Strings.HOME);
 
     } // onCreate
 
 
     // helper
+    // TODO: might not need this
     private void showSortBy(Boolean option1) {
         if ( sortMenu == null) {
             return;
@@ -256,43 +263,32 @@ public class MainActivity extends AppCompatActivity {
 
         String url1;
 
-        // TODO: 10/9 "Sort By" urls
-        //    https://www.reddit.com/r/announcements/hot/.json
-        //    https://www.reddit.com/r/<subRedditName1>/new/.json
+        // .Sort By" urls
+        // https://www.reddit.com/r/<subRedditName1>/new/.json
 
-        // TODO: 10/9 HIDE the SORT BY, maybe do something here for the "Sort By" optoin, top right
         // clearing the search bar
 //        if ( mSearchView != null) {
 //            mSearchView.setQuery("", false);
 //            mSearchView.setIconified(true); // << show the search icon
 //        }
 
+        if ( subRedditName.equals( getString(R.string.home) ) ) {
 
-        // checking that sortRedditBy has been selected
-//            Log.i(LOG_TAG, "sortRedditBy " + sortRedditBy);
-
-
-
-        if ( subRedditName.equals("home") ) {
-
-            Log.i(LOG_TAG, "subRedditName " + "home");
-            // https://www.reddit.com/.json
-
+            Log.d(LOG_TAG, "subRedditName " + "home");
             url1 = Strings.REDDIT_URL + Strings.JSON_EXTENSION;
 
         } else {
 
-            // https://www.reddit.com/r/Art/hot/.json
             url1 =  Strings.REDDIT_URL
                     + Strings.REDDIT_URL_R
                     + subRedditName1
                     + "/"
                     + sortRedditBy
-                    + Strings.JSON_EXTENSION_URL;
+                    + Strings.JSON_EXTENSION;
 
         } // else
 
-        Log.i(LOG_TAG, "url1 " + url1);
+        Log.d(LOG_TAG, "url1 " + url1);
         volleyRequest(url1); // << Reddit homepage with JSON response
 
     } // updateMainActivity()
@@ -313,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(LOG_TAG, response.toString());
+//                Log.d(LOG_TAG, response.toString());
                 mAdapter.clearAdapter();
 
                 // parse JSON data
@@ -355,7 +351,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Data fetched from Reddit, now update the Adapter
-//                mAdapter.notifyDataSetChanged();
                 mAdapter.swapData(redditPosts);
 
             } // onResponse
@@ -363,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError e1) {
-                VolleyLog.d(LOG_TAG, "onErrorResponse: " + e1.getMessage());
+                VolleyLog.d(LOG_TAG, "onErrorResponse " + e1.getMessage());
             } // onErrorResponse()
 
         });
@@ -374,7 +369,6 @@ public class MainActivity extends AppCompatActivity {
     } // volleyRequest()
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -382,11 +376,11 @@ public class MainActivity extends AppCompatActivity {
         this.sortMenu = menu;
 
         // for the Search button in reddit_post_search_menuarch_menu.xml
-        // TODO 10/9: what does this do?
-        MenuItem searchItem = menu.findItem(R.id.item_search_menu);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.item_search_menu));
+//        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.item_search_menu)); // this search "icon" on the top right corner
+        mSearchView = (SearchView) menu.findItem(R.id.item_search_menu).getActionView();
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mSearchView.clearFocus();
@@ -402,7 +396,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-        });
+
+        }); // mSearchView.setOnQueryTextListener()
 
         return true;
     } // onCreateOptionsMenu()
@@ -415,8 +410,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(subRedditName);
 
         String searchUrl;
-        String searchString1 = "search.json?q=" + searchQuery;
-//        Log.i(LOG_TAG,"searchForRedditPost() " + subRedditName);
+        String searchString1 = Strings.SEARCH + Strings.JSON_EXTENSION +  Strings.QUERY  + searchQuery;
+        Log.d(LOG_TAG,"searchString1 " + searchString1);
 
         // for "home" sub-reddit
         if (currentSubRedditItem.equals("home") ) {
@@ -447,29 +442,6 @@ public class MainActivity extends AppCompatActivity {
     } // searchForRedditPost()
 
 
-    // helper
-    public void makeFirebaseJobDispatcher() {
-        // TODO: 10/8 put a Jobdispatcher here maybe?
-        // https://github.com/firebase/firebase-jobdispatcher-android
-        // Creating a new dispatcher using the Google Play driver.
-
-        if(context1 != null) {
-            FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context1));
-
-            Job myJob = dispatcher.newJobBuilder()
-                    .setService(MyJobService.class) // the JobService that will be called
-                    .setTag("jobID1")
-                    .build();
-
-            dispatcher.mustSchedule(myJob);
-        } else {
-            Log.e(LOG_TAG, "makeFirebaseJobDispatcher() error" );
-        }
-
-    } // makeFirebaseJobDispatcher()
-
-
-
     public MainActivityAdapter.OnItemClickListener redditPostClick1 = new MainActivityAdapter.OnItemClickListener() {
 
         @Override
@@ -477,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
             RedditPost redditPost1 = mAdapter.getRedditPosts().get(position);
 
             Bundle bundle1 = new Bundle();
-            bundle1.putParcelable("redditPost1", redditPost1); // << using Parcelable
+            bundle1.putParcelable( getString(R.string.redditPost1) , redditPost1); // << using Parcelable
 
             final Intent intent1 = new Intent(getBaseContext(), DetailActivity.class);
             intent1.putExtras(bundle1);
@@ -487,40 +459,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    // helper
-    // Google Crashlytics for a crash
-    public void forceACrash() {
-        // [START crash_force_crash]
-        Button crashButton = new Button(this);
-        crashButton.setText("Crash!");
-        crashButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Crashlytics.getInstance().crash(); // Force a crash
-            }
-        });
-
-        addContentView(crashButton, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        // [END crash_force_crash]
-    }
-
-
     // Open the drawer when the button is tapped
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // *** replaced with
-        // makeNavigationDrawerMove()
-
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                mDrawerLayout.openDrawer(GravityCompat.START);
-//                return true;
-//        } // switch
-
-        // *** replaced with
-        // makeNavigationDrawerMove()
 
         switch (item.getItemId()) {
 
@@ -536,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-        Log.d(LOG_TAG, "subRedditName>>> " + subRedditName); // >> this works
+        Log.d(LOG_TAG, "subRedditName " + subRedditName); // >> this works
         updateMainActivity(subRedditName);
 
         return true;
@@ -565,7 +506,30 @@ public class MainActivity extends AppCompatActivity {
     } // makeNavigationDrawerMove()
 
 
+    // helper
+    // Google Crashlytics for a crash
+    public void forceACrash() {
+        // [START crash_force_crash]
+        Button crashButton = new Button(this);
+        crashButton.setText("Crash!");
+        crashButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Crashlytics.getInstance().crash(); // Force a crash
+            }
+        });
 
+        addContentView(crashButton, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        // [END crash_force_crash]
+    }
+
+
+    // TODO: 10/8 put a Jobdispatcher here maybe?
+    // helper
+    public void makeFirebaseJobDispatcher() {
+
+    } // makeFirebaseJobDispatcher()
 
 
 } // class MainActivity

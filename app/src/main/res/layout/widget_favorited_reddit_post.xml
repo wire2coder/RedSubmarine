@@ -4,6 +4,7 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,10 +23,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
             android:text="@string/widget_title"
-            />
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     </FrameLayout>
 
@@ -37,7 +37,7 @@
         >
 
         <!-- this ListView is linked to other XML layout file -->
-        <!--TODO: 10/6 we are getting an error here why???, don't need to include the line below, and I don't know why -->
+        <!-- don't need to include the line below, and I don't know why -->
         <!--android:listitem="@layout/widget_item_list_view"-->
         <ListView
             android:id="@+id/widget_item_list_view1"
@@ -45,17 +45,6 @@
             android:layout_height="match_parent"
             android:divider="@drawable/divider"
             android:dividerHeight="1px"
-            />
-
-
-        <!-- this TextView is show when there's nothing to show in the widget -->
-        <TextView
-            android:id="@+id/widget_nothing_to_see"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/widget_nothing_to_see"
-            android:textSize="24sp"
             />
 
     </FrameLayout>

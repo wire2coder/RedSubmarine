@@ -8,25 +8,51 @@
 
     <string name="title" translatable="false">title</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!--3 dot image button inside fragment_detail.xml-->
     <string name="three_dot_menu_open_in">open with</string>
     <string name="three_dot_menu_share_with">share with</string>
 
     <!-- Widget Strings -->
-    <string name="widget_title">Saved Post</string>
+    <string name="widget_title">Saved Posts</string>
     <string name="widget_nothing_to_see">No Posts Saved</string>
 
     <!-- General Strings -->
     <string translatable="true" name="hot_reddit_post">hot</string>
     <string translatable="true" name="new_reddit_post">new</string>
+    <string translatable="true" name="home">home</string>
+    <string translatable="true" name="favorited_posts">Favorited Posts</string>
+
+    <string name="data">data</string>
+    <string name="body">body</string>
+    <string name="author">author</string>
+    <string name="downs">downs</string>
+    <string name="ups">ups</string>
+    <string name="created_utc">created_utc</string>
+    <string name="replies">replies</string>
+    <string name="children">children</string>
+
+
+    <!-- Subreddit Strings -->
+    <string translatable="false" name="all_sub_reddits">
+        "home,all,LifeProTips,aww,GetMotivated
+        ,creepy,EarthPorn,explainlikeimfive
+        ,funny,Futurology,gadgets,gaming
+        ,AskReddit,blog,books
+        ,gifs,history,IAmA,Jokes"
+    </string>
+
+
+    <!-- Parcerable Strings -->
+    <string name="redditPost1">redditPost1</string>
+
 
     <!-- TODO: rename this string -->
     <string translatable="false" name="data_update_key">com.bkk.android.redsubmarine.ACTION_DATA_UPDATED</string>
     <string translatable="true" name="drawer_open">drawer_open</string>
     <string translatable="true" name="drawer_close">drawer_close</string>
 
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

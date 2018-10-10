@@ -6,10 +6,10 @@
     android:initialLayout="@layout/widget_favorited_reddit_post"
     android:minHeight="110dp"
     android:minWidth="180dp"
-    android:previewImage="@drawable/ic_thermo_white_24dp"
+    android:previewImage="@drawable/ic_reddit_logo2"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="86400000"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
     />
 
-    <!-- android:updatePeriodMillis="86400000" // (1000*60*60*24) -->
+    <!-- android:updatePeriodMillis="1800000" // 30 minutes -->

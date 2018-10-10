@@ -52,7 +52,7 @@
         <!--completed: add another Service here for job dispatcher-->
         <!--The purpose of the "exported" is to let other apps have access to a service.-->
         <service
-            android:name=".firebase.MyJobService"
+            android:name=".firebase.ReminderService"
             android:exported="false">
 
             <intent-filter>

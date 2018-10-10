@@ -1,16 +1,10 @@
 package com.bkk.android.redsubmarine;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.ColorSpace;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.os.StrictMode;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,18 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.bkk.android.redsubmarine.adapter.RedditCommentsAdapter;
 import com.bkk.android.redsubmarine.database.AppDatabase;
 import com.bkk.android.redsubmarine.database.RedditPostEntry;
@@ -42,17 +28,13 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -99,11 +81,10 @@ public class DetailFragment extends Fragment {
         final Activity activity1 = this.getActivity();
 
         // extracting data from DetailActivity
-        final RedditPost redditPost1 =  getArguments().getParcelable("redditPost1");
-        final String commentUrl = "https://www.reddit.com" + redditPost1.getPermalink() + ".json";
+        final RedditPost redditPost1 =  getArguments().getParcelable(getString(R.string.redditPost1) );
+//        final String commentUrl = "https://www.reddit.com" + redditPost1.getPermalink() + ".json";
+        final String commentUrl = Strings.REDDIT_URL + redditPost1.getPermalink() + Strings.JSON_EXTENSION;
 
-//        Log.d( LOG_TAG, redditPost1.getThumbnail() );
-//        Log.d( LOG_TAG, "www.reddit.com" + redditPost1.getPermalink() + ".json" );
 
         try {
                 // use Picasso to get the "header image"
@@ -126,11 +107,11 @@ public class DetailFragment extends Fragment {
         final RedditPostEntry redditPostEntry11 = mDb.redditPostDao().loadRedditPostEntryById( redditPost1.getId()  );
 
         if (redditPostEntry11 != null ) {
-            Log.i(LOG_TAG, String.valueOf( redditPostEntry11.getId() ) );
+            Log.d(LOG_TAG, String.valueOf( redditPostEntry11.getId() ) );
             isFaved = true;
             save_pic_button.setChecked(true);
         } else {
-            Toast.makeText(getContext(), "redditPostEntry11 does not exist", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "redditPostEntry11 does not exist", Toast.LENGTH_SHORT).show();
             isFaved = false;
             save_pic_button.setChecked(false);
         }
@@ -148,19 +129,19 @@ public class DetailFragment extends Fragment {
             protected String doInBackground(String... inputs) {
 
                 String inputUrl = inputs[0];
-                Log.i(LOG_TAG, "doInBackground " + inputUrl);
+                Log.d(LOG_TAG, "doInBackground " + inputUrl);
 
                 // Get the contents of the Reddit Post
-                String dataStream = getComments1(inputUrl);
+                String dataStream = getCommentsFromBufferReader(inputUrl);
 
                 try {
 
                     JSONArray jsonArray = new JSONArray(dataStream)
                             .getJSONObject(1)
-                            .getJSONObject("data")
-                            .getJSONArray("children");
+                            .getJSONObject( Strings.DATA )
+                            .getJSONArray( Strings.CHILDREN );
 
-                    Log.i("comments>>>", jsonArray.toString() );
+                    Log.d("comments>>> ", jsonArray.toString() );
 
                     // Reddit comments with no reply, reply level zero
                     process1(mComments, jsonArray, 0);
@@ -198,7 +179,7 @@ public class DetailFragment extends Fragment {
 
             GetRedditComments getRedditComments = new GetRedditComments();
 
-            Log.i(LOG_TAG, "commentUrl>>>" + commentUrl);
+            Log.d(LOG_TAG, "commentUrl>>> " + commentUrl);
             getRedditComments.execute(commentUrl);
 
         } else {
@@ -233,7 +214,7 @@ public class DetailFragment extends Fragment {
 
                             case R.id.three_dot_menu_open_with:
                                 Intent intentOpen = new Intent((Intent.ACTION_VIEW));
-//                                Log.i(LOG_TAG, redditPost1.getUrl() );
+//                                Log.d(LOG_TAG, redditPost1.getUrl() );
                                 Uri uri1 = Uri.parse( redditPost1.getUrl() );
 
                                 intentOpen.setData(uri1); // << wow, this works
@@ -248,7 +229,7 @@ public class DetailFragment extends Fragment {
                                 intentShare.setType("text/plain");
                                 startActivity(intentShare);
 
-                                startActivity( Intent.createChooser(intentShare, "asdf Share") );
+                                startActivity( Intent.createChooser(intentShare, Strings.ASDF_SHARE ) );
 //                                startActivity( intentShare );
                                 break;
 
@@ -294,13 +275,13 @@ public class DetailFragment extends Fragment {
                     // get database object
                     mDb.redditPostDao().insertRedditPost(redditPostEntry1);
 
-                    Toast.makeText(getContext(), "redditPostEntry11 saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), Strings.REDDIT_POST_ENTRY_11_SAVED, Toast.LENGTH_SHORT).show();
 
                 } else {
                     // delete the post from database
                     mDb.redditPostDao().deleteRedditPost(redditPostEntry11);
 
-                    Toast.makeText(getContext(), "redditPostEntry11 deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), Strings.REDDIT_POST_ENTRY_11_DELETED, Toast.LENGTH_SHORT).show();
                 } // else
 
 
@@ -322,44 +303,34 @@ public class DetailFragment extends Fragment {
     } // onCreateView()
 
 
-    // TODO: rename this, what does this do again? parsing comments from JSON
+    // TODO: rename this, parsing comments from JSON
     // helper
-    private void process1( ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_level ) throws Exception {
+    private void process1( ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_indent_level ) throws Exception {
 
         for (int x=0; x < jsonArray.length(); x++) {
 
-            // TODO: might not need this
-//            if (jsonArray.getJSONObject(x).optString("kind") == null) {
-//                continue;
-//            }
-
-            // TODO: might not need this
-//            if (jsonArray.getJSONObject(x).optString("kind").equals("t1") == false) {
-//                continue;
-//            }
-
-            JSONObject data1 = jsonArray.getJSONObject(x).getJSONObject("data");
+            JSONObject data1 = jsonArray.getJSONObject(x).getJSONObject( Strings.DATA );
 
             // extracting comments data from "data" and put the "data" inside the RedditComments object
 
             RedditComments redditComments1 = new RedditComments();
 
-            redditComments1.setText( data1.getString("body") );
-            redditComments1.setAuthor( data1.getString("author") );
-
-            int votes1 = data1.getInt("ups") - data1.getInt("downs");
+            int votes1 = data1.getInt( Strings.UPS ) - data1.getInt( Strings.DOWNS );
             redditComments1.setVotes( String.valueOf(votes1) );
 
-            Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-            calendar.setTimeInMillis( data1.getLong("created_utc") * 1000 );
+            Calendar calendar = Calendar.getInstance( Locale.ENGLISH );
+            calendar.setTimeInMillis( data1.getLong( Strings.CREATED_UTC ) * 1000 );
             String date1 = android.text.format.DateFormat.format("HH:mm  dd/MM/yy", calendar).toString();
             redditComments1.setPostedOn(date1);
 
-            redditComments1.setLevel(comment_level);
+            redditComments1.setText( data1.getString( Strings.BODY ) );
+            redditComments1.setAuthor( data1.getString( Strings.AUTHOR ) );
+
+            redditComments1.setLevel(comment_indent_level);
 
             if ( redditComments1.getAuthor() != null ) {
                 redditComments_al.add(redditComments1);
-                addCommentReplies(redditComments_al, data1, comment_level + 1);
+                addCommentReplies(redditComments_al, data1, comment_indent_level + 1);
             } // if
 
         } // inside for loop
@@ -367,20 +338,20 @@ public class DetailFragment extends Fragment {
     } // process1()
 
 
-    private void addCommentReplies( ArrayList<RedditComments> redditCommentsArrayList, JSONObject jsonObject, int comment_level ) {
+    private void addCommentReplies( ArrayList<RedditComments> redditCommentsArrayList, JSONObject jsonObject, int comment_indent_level ) {
 
         try {
 
-            if ( jsonObject.get("replies").equals("") ) {
+            if ( jsonObject.get( Strings.REPLIES ).equals("") ) {
                 // no replies to the comment
                 return; // exit the function
             }
 
-            JSONArray jsonArray = jsonObject.getJSONObject("replies")
-                    .getJSONObject("data")
-                    .getJSONArray("children");
+            JSONArray jsonArray = jsonObject.getJSONObject( Strings.REPLIES )
+                    .getJSONObject( Strings.DATA )
+                    .getJSONArray( Strings.CHILDREN );
 
-            process1(redditCommentsArrayList, jsonArray, comment_level );
+            process1(redditCommentsArrayList, jsonArray, comment_indent_level );
 
         } catch(Exception e) {
             Log.e(LOG_TAG, "error at addCommentReplies()" );
@@ -390,28 +361,28 @@ public class DetailFragment extends Fragment {
 
 
     // helper
-    public static String getComments1(String url) {
+    public static String getCommentsFromBufferReader(String url) {
 
         String empty = "";
 
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuffer stringBuffer1 = new StringBuffer();
             BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(httpURLConnection.getInputStream() ) );
 
             while ( (empty = bufferedReader.readLine()) != null) {
-                stringBuffer.append(empty).append("\n");
+                stringBuffer1.append(empty).append("\n");
             }
 
             bufferedReader.close();
-            return stringBuffer.toString();
+            return stringBuffer1.toString();
 
         } catch(Exception e) {
-            Log.d(LOG_TAG, "error: parseStream()");
+            Log.d(LOG_TAG, "error parseStream() ");
             return null;
         }
 
-    } // getComments1()
+    } // getCommentsFromBufferReader()
 
 
     @Override
