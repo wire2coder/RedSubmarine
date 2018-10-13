@@ -27,8 +27,8 @@ import java.util.List;
 
 public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapter.RecyclerViewHolder> {
 
-    private static final String CLASS_TAG = MainActivityAdapter.class.getSimpleName();
-    private static final String LOG_TAG = "ttt>>>: ";
+    // class variables
+    private static final String LOG_TAG = MainActivityAdapter.class.getSimpleName();
 
     private ImageLoader mImageLoader;
     private List<RedditPost> redditPosts;
@@ -88,7 +88,7 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
                 .load(redditPost.getThumbnail())
                 .into(holder.iv_thumbnail);
         } catch (IllegalArgumentException e) {
-            holder.iv_thumbnail.setImageResource(R.drawable.ic_comment_black_24dp);
+            holder.iv_thumbnail.setImageResource(R.drawable.ic_twotone_comment_24px);
         }
 
 
@@ -104,7 +104,6 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
         return redditPosts != null ? redditPosts.size() : 0;
     }
 
-    // TODO: need to implement click listener
     public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         //>> member variables
@@ -128,10 +127,9 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
             this.tv_comments_counter = itemView.findViewById(R.id.tv_comments_counter);
             this.tv_subreddit_name = itemView.findViewById(R.id.tv_subreddit_name);
 
-//            itemView.setClickable(true); // TODO: remove this line
             itemView.setOnClickListener(this);
 
-        }
+        } // RecyclerViewHolder()
 
         // implements View.OnClickListener
         @Override

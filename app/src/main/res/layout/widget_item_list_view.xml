@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:background="@color/colorWidgetItem"
+    android:background="@android:color/darker_gray"
     >
 
     <LinearLayout
@@ -57,7 +57,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_chart"
+                    android:src="@drawable/ic_twotone_thumb_up_alt_24px"
                     android:paddingEnd="10dp"
                     />
 
@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="10dp"
-                    android:src="@drawable/ic_comment_white_24dp" />
+                    android:src="@drawable/ic_twotone_comment_24px" />
 
                 <TextView
                     android:id="@+id/widget_post_comments"

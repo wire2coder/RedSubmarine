@@ -35,7 +35,6 @@ import com.bkk.android.redsubmarine.model.RedditPost;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.Driver;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
@@ -112,11 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerMenu = drawer_view1.getMenu();
 
-        // TODO: i don't know what this does
-//        mSharedPreferences1.edit().putString("SUBREDDITS_SHARE_PREF_KEY", "home").commit();
-//        mSharedPreferences1.edit().putBoolean("FIRST_RUN", false).commit();
 
-        // TODO: 9/28, put the Strings into "SharePreferrences"
         String string1 = getString(R.string.all_sub_reddits);
         List<String> subRedditList1 = Arrays.asList(string1.split(","));
         Log.d(LOG_TAG, "subRedditList1 " + subRedditList1.toString());
@@ -128,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
         drawer_view1.setItemIconTintList(null); // << make the Reddit item visible
 
-
         // Open the left-hand-side Drawer for "Favorites"
         drawer_view1.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -138,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         // This is the action_favorites button
                         // R.id.action_favorites
                         // /menu/drawer_view.xml
-                        if (menuItem1.getGroupId() == R.id.groupFav) {
+                        if (menuItem1.getGroupId() == R.id.group_favorite) {
 
                             // clear the data in the ArrayList
                             redditPosts.clear();
@@ -217,18 +211,6 @@ public class MainActivity extends AppCompatActivity {
     } // onCreate
 
 
-    // helper
-    // TODO: might not need this
-    private void showSortBy(Boolean option1) {
-        if ( sortMenu == null) {
-            return;
-        }
-
-        Log.d(LOG_TAG, " showSortBy() ");
-
-    } // showSortBy()
-
-
     private void makeAToolBar() {
         // Set the toolbar as the action bar
         toolbar = findViewById(R.id.toolbar1);
@@ -237,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Enable the app bar's "home" button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // << this line shows an arrow pointing left
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu); // << this line replaced the "left pointing arrow" with the "3 lines icon"
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_menu_24px); // << this line replaced the "left pointing arrow" with the "3 lines icon"
     } // makeAToolBar()
 
 
@@ -251,12 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
         // .Sort By" urls
         // https://www.reddit.com/r/<subRedditName1>/new/.json
-
-        // clearing the search bar
-//        if ( mSearchView != null) {
-//            mSearchView.setQuery("", false);
-//            mSearchView.setIconified(true); // << show the search icon
-//        }
 
         if ( subRedditName.equals( getString(R.string.home) ) ) {
 
@@ -403,9 +379,6 @@ public class MainActivity extends AppCompatActivity {
         if (currentSubRedditItem.equals("home") ) {
 
             searchUrl = Strings.REDDIT_URL + searchString1;
-
-            // TODO: 10/8 turn off "reddit post sorting" here, for "Favorites, Home"
-//            hideSortMenu(true);
 
         } else {
             // for "everything other sub-reddit" that is not "home

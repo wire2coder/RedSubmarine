@@ -35,7 +35,7 @@ public class DetailActivity extends AppCompatActivity {
         RedditPost redditPost1 = bundle1.getParcelable(getString(R.string.redditPost1) );
         Log.d(LOG_TAG, redditPost1.getTitle() );
 
-//        toolbar2 = findViewById(R.id.toolbar2); // looking for toolbar2
+
         setSupportActionBar(toolbar2); // set up the top Action Bar, i can see 'RedSubmarine' title
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle( redditPost1.getTitle() );
@@ -55,12 +55,12 @@ public class DetailActivity extends AppCompatActivity {
         detailFragment.setArguments(bundle2);
 
         fragmentManager.beginTransaction()
-                .add(R.id.fragment_detail1, detailFragment)
+                .replace(R.id.fragment_detail1, detailFragment)
                 .commit();
-
 //        }
 
     } // onCreate()
+
 
 
     @Override

@@ -28,7 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
                        ,AppDatabase.DATABASE_NAME)
 
                        // Queries should be done in a separate thread to avoid lock the UI
-                       // TODO: 9/26 We will disable this "method()" in production code
+                       // TODO: We will disable this "method()" in production code
                        .allowMainThreadQueries()
                        .build();
             } // synchronized

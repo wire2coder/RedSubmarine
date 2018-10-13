@@ -92,7 +92,7 @@ public class DetailFragment extends Fragment {
                         .load(redditPost1.getThumbnail())
                         .into(imageView1);
         } catch (IllegalArgumentException e) {
-            imageView1.setImageResource(R.drawable.ic_comment_black_24dp);
+            imageView1.setImageResource(R.drawable.ic_twotone_comment_24px);
         }
 
 
@@ -144,7 +144,7 @@ public class DetailFragment extends Fragment {
                     Log.d("comments>>> ", jsonArray.toString() );
 
                     // Reddit comments with no reply, reply level zero
-                    process1(mComments, jsonArray, 0);
+                    parseCommentsFromJson(mComments, jsonArray, 0);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -167,7 +167,6 @@ public class DetailFragment extends Fragment {
                 recyclerView1.setLayoutManager(linearLayoutManager1);
                 recyclerView1.setNestedScrollingEnabled(false); // can't scroll inside the Adapter's Layoutfile
 
-                // TODO: 9/25, maybe do the adapterSwapData() here instead
                 recyclerView1.setAdapter(redditCommentsAdapter);
 
 
@@ -182,16 +181,6 @@ public class DetailFragment extends Fragment {
             Log.d(LOG_TAG, "commentUrl>>> " + commentUrl);
             getRedditComments.execute(commentUrl);
 
-        } else {
-
-            // TODO: get data out of Share Preferences
-            // get data out of ParcelableArrrayList
-
-            // make a new Adapter
-
-            // RecyclerView.setAdapter()
-            // RecyclerView.setLayout()
-            // RecyclerView.setNestedScrolling(false)
         }
 
 
@@ -241,7 +230,7 @@ public class DetailFragment extends Fragment {
 
                 }); // popupMenu1.setOnMenuItemClickListener()
 
-                // show the three_dot_menu
+                // show the "open with" and "share" menu
                 popupMenu1.show();
 
             } // onClick()
@@ -295,17 +284,12 @@ public class DetailFragment extends Fragment {
 
         }); // save_pic_button.setOnClickListener()
 
-
-        // TODO: add Google Ads
-
-
         return rootView;
     } // onCreateView()
 
 
-    // TODO: rename this, parsing comments from JSON
     // helper
-    private void process1( ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_indent_level ) throws Exception {
+    private void parseCommentsFromJson(ArrayList<RedditComments> redditComments_al, JSONArray jsonArray, int comment_indent_level ) throws Exception {
 
         for (int x=0; x < jsonArray.length(); x++) {
 
@@ -335,7 +319,7 @@ public class DetailFragment extends Fragment {
 
         } // inside for loop
 
-    } // process1()
+    } // parseCommentsFromJson()
 
 
     private void addCommentReplies( ArrayList<RedditComments> redditCommentsArrayList, JSONObject jsonObject, int comment_indent_level ) {
@@ -351,7 +335,7 @@ public class DetailFragment extends Fragment {
                     .getJSONObject( Strings.DATA )
                     .getJSONArray( Strings.CHILDREN );
 
-            process1(redditCommentsArrayList, jsonArray, comment_indent_level );
+            parseCommentsFromJson(redditCommentsArrayList, jsonArray, comment_indent_level );
 
         } catch(Exception e) {
             Log.e(LOG_TAG, "error at addCommentReplies()" );
@@ -363,15 +347,15 @@ public class DetailFragment extends Fragment {
     // helper
     public static String getCommentsFromBufferReader(String url) {
 
-        String empty = "";
+        String emptyString = "";
 
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
             StringBuffer stringBuffer1 = new StringBuffer();
             BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(httpURLConnection.getInputStream() ) );
 
-            while ( (empty = bufferedReader.readLine()) != null) {
-                stringBuffer1.append(empty).append("\n");
+            while ( (emptyString = bufferedReader.readLine()) != null) {
+                stringBuffer1.append(emptyString).append("\n");
             }
 
             bufferedReader.close();

@@ -22,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-            <!-- TODO: remove this -->
-            <!--android:theme="@style/AppTheme.AppBarOverlay"-->
+
 
         <!-- Adding Toolbar for Navigation Drawer, this is at the top left corner of the screen -->
         <android.support.v7.widget.Toolbar
@@ -31,8 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             />
-            <!-- TODO: remove this -->
-            <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
+
 
         </android.support.design.widget.AppBarLayout>
 
@@ -47,7 +45,6 @@
             <include layout="@layout/recyclerview_reddit_posts" />
 
         </FrameLayout>
-        <!--TODO: 10/8 need to add top padding-->
 
 
     </android.support.design.widget.CoordinatorLayout>

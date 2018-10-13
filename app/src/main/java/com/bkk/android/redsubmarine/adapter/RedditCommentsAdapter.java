@@ -62,27 +62,6 @@ public class RedditCommentsAdapter extends RecyclerView.Adapter<RedditCommentsAd
         // adding "left padding" to the comments if it is a reply to a previous comment
         asdfViewHolder.linearLayout2.setPadding( redditComments1.getLevel() * 27, 0, 0, 0);
 
-        // adding color to differentiate each "comment reply"
-
-        // TODO: 10/8 remove the this switch statement
-//        switch ( redditComments1.getLevel() ) {
-//
-//            case 0:
-//                asdfViewHolder.commentText.setBackgroundColor(Color.parseColor("#E8920C"));
-//                break;
-//
-//            case 1:
-//                asdfViewHolder.commentText.setBackgroundColor(Color.parseColor("#DEFF00"));
-//                break;
-//
-//            case 2:
-//                asdfViewHolder.commentText.setBackgroundColor(Color.parseColor("#FF0000"));
-//                break;
-//
-//                // do not include "default case"
-//
-//        } // switch
-
     } // onBindViewHolder()
 
     @Override

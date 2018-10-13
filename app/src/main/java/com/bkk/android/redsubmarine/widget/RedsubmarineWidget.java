@@ -64,7 +64,6 @@ public class RedsubmarineWidget extends AppWidgetProvider {
 
     } // onUpdate
 
-    // TODO: rename this
     // this goes to RedWidgetRemoteViewServices.java
     private void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
 

@@ -35,7 +35,7 @@ public class RedWidgetRemoteViewServices extends RemoteViewsService {
 
             }
 
-            // TODO: 10/7 onDataSetChanged() not trigger, need to add some code to DetailFragment.java
+
             @Override
             public void onDataSetChanged() {
                 Log.d(LOG_TAG,"onDataSetChanged() ");

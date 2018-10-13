@@ -40,8 +40,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@android:color/holo_green_dark"
+                android:background="@android:color/darker_gray"
                 >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_twotone_thumb_up_alt_24px"
+                    android:layout_gravity="center_vertical"
+                    />
 
                 <!--text 1-->
                 <TextView
@@ -51,7 +58,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.35"
                     android:drawablePadding="4dp"
-                    />
+                    android:textColor="@android:color/white" />
 
                 <!--text 2-->
                 <TextView
@@ -60,23 +67,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.35"
-                    android:paddingLeft="10dp"
-                    android:paddingStart="10dp"
-                    android:drawableLeft="@drawable/ic_comment_white_24dp"
+                    android:drawableLeft="@drawable/ic_twotone_comment_24px"
                     android:drawablePadding="4dp"
-                    />
+                    android:paddingStart="10dp"
+                    android:paddingLeft="10dp"
+                    android:textColor="@android:color/white" />
 
-                <!--image button 1-->
-                <!--<ImageButton-->
-                    <!--android:id="@+id/fragment_save_button"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:src="@drawable/ic_favorite_border_white_24dp"-->
-                    <!--android:layout_weight="0.15"-->
-                    <!--android:clickable="true"-->
-                    <!--android:focusable="true"-->
-                     <!--/>-->
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_favorite_24px"
+                    android:layout_gravity="center_vertical"
+                    />
 
                 <!--image button 2-->
                 <CheckBox
@@ -97,7 +101,7 @@
                     android:layout_weight="0.15"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/ic_more_vert_white_24dp" />
+                    android:src="@drawable/ic_baseline_toc_24px" />
 
             </LinearLayout>
 
@@ -111,8 +115,8 @@
                     android:id="@+id/fragment_post_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:textColor="@android:color/black" />
 
             </LinearLayout>
 
@@ -127,6 +131,5 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-    <!--TODO: put AdView here outside of the ScrollView 9/22 -->
 
 </FrameLayout>

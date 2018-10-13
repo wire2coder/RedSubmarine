@@ -45,16 +45,6 @@
     <!-- Parcerable Strings -->
     <string name="redditPost1">redditPost1</string>
 
-
-    <!-- TODO: rename this string -->
-    <string translatable="false" name="data_update_key">com.bkk.android.redsubmarine.ACTION_DATA_UPDATED</string>
-    <string translatable="true" name="drawer_open">drawer_open</string>
-    <string translatable="true" name="drawer_close">drawer_close</string>
-
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!-- search_and_sort_menu.xml -->
     <string name="sort_posts_by">sort posts by:</string>
     <string name="new_post">New Post</string>
@@ -63,6 +53,9 @@
     <!-- nav_header.xml -->
     <string name="menu_header_title">Red Submarine</string>
 
-    <!-- item_mainactivity_adapter.xml -->
+    <!---->
+    <string translatable="false" name="data_update_key">com.bkk.android.redsubmarine.ACTION_DATA_UPDATED</string>
+    <string translatable="true" name="drawer_open">drawer_open</string>
+    <string translatable="true" name="drawer_close">drawer_close</string>
 
 </resources>

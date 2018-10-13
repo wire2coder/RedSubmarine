@@ -23,8 +23,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!--TODO: 10/2 add a v7.widget.Toolbar here-->
-
     <!-- for fragment_detail -->
     <FrameLayout
         android:id="@+id/fragment_detail1"
