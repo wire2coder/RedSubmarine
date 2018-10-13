@@ -55,4 +55,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- search_and_sort_menu.xml -->
+    <string name="sort_posts_by">sort posts by:</string>
+    <string name="new_post">New Post</string>
+    <string name="hot_post">Hot Post</string>
+
+    <!-- nav_header.xml -->
+    <string name="menu_header_title">Red Submarine</string>
+
+    <!-- item_mainactivity_adapter.xml -->
+
 </resources>

@@ -23,18 +23,20 @@ public class ReminderService extends JobService {
     @Override
     public boolean onStartJob(JobParameters job) {
 
+        // Do some work here
         Log.i(TAG, "onStartJob");
 
-        return false;
-    }
+        return false; // Answers the question: "Is there still work going on?"
+    } // onStartJob()
 
     @Override
     public boolean onStopJob(JobParameters job) {
 
+        // Do some work here
         Log.i(TAG, "onStopJob");
 
-        return false;
-    }
+        return false; // Answers the question: "Should this job be retried?"
+    } // onStopJob()
 
 
 } // class ReminderService

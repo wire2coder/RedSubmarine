@@ -40,6 +40,7 @@ import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
 
 import org.json.JSONArray;
@@ -205,22 +206,7 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-        // TODO: 10/8 need to modify this
-        makeFirebaseJobDispatcher();
-
-        FirebaseJobDispatcher dispatcher1 = new FirebaseJobDispatcher( new GooglePlayDriver(MainActivity.this) );
-        dispatcher1.mustSchedule(
-                dispatcher1.newJobBuilder()
-                .setService(ReminderService.class)
-                .setTag("TestingJob")
-                .setRecurring(true)
-                        // TODO: 10/10 job not executing every 5 seconds
-                .setTrigger(Trigger.executionWindow(5, 5)) // execution window of 5 to 30 seconds
-                .build()
-        );
-
-
+        makeFirebaseJobDispatcher(); // << start a background service with Firebase Job Dispatcher
 
         makeNavigationDrawerMove(); // << navigation menu on the RIGHT of the screen
 
@@ -525,9 +511,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // TODO: 10/8 put a Jobdispatcher here maybe?
     // helper
     public void makeFirebaseJobDispatcher() {
+
+        FirebaseJobDispatcher dispatcher1 = new FirebaseJobDispatcher( new GooglePlayDriver(MainActivity.this) );
+
+
+        Bundle myExtrasBundle = new Bundle();
+        myExtrasBundle.putString("some_key", "some_value");
+
+        Job myJob = dispatcher1.newJobBuilder()
+                // the JobService that will be called
+                .setService(ReminderService.class)
+                // uniquely identifies the job
+                .setTag("my-unique-tag")
+                // one-off job
+                .setRecurring(false)
+                // don't persist past a device reboot
+                .setLifetime(Lifetime.UNTIL_NEXT_BOOT)
+                // start between 0 and 60 seconds from now
+                .setTrigger(Trigger.executionWindow(0, 60))
+                // don't overwrite an existing job with the same tag
+                .setReplaceCurrent(false)
+                // retry with exponential backoff
+                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                // constraints that need to be satisfied for the job to run
+                .setConstraints(
+                        // only run on an unmetered network
+                        Constraint.ON_UNMETERED_NETWORK,
+                        // only run when the device is charging
+                        Constraint.DEVICE_CHARGING
+                )
+                .setExtras(myExtrasBundle)
+                .build();
+
+        dispatcher1.mustSchedule(myJob);
 
     } // makeFirebaseJobDispatcher()
 

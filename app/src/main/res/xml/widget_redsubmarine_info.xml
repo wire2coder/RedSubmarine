@@ -6,7 +6,7 @@
     android:initialLayout="@layout/widget_favorited_reddit_post"
     android:minHeight="110dp"
     android:minWidth="180dp"
-    android:previewImage="@drawable/ic_reddit_logo2"
+    android:previewImage="@drawable/ic_reddit_logo"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
